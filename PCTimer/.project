@@ -14,16 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>MyTask.java</name>
-			<type>1</type>
-			<location>/home/mel/NetBeansProjects/BreakTimer/src/main/java/com/timer/breaktimer/MyTask.java</location>
-		</link>
-		<link>
-			<name>SystemTrayIcon.java</name>
-			<type>1</type>
-			<location>/home/mel/NetBeansProjects/BreakTimer/src/main/java/com/timer/breaktimer/SystemTrayIcon.java</location>
-		</link>
-	</linkedResources>
 </projectDescription>

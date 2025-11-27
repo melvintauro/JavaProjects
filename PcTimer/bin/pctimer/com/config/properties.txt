@@ -1,0 +1,3 @@
+ WorkTime=40
+BreakTime=15
+     Font=14

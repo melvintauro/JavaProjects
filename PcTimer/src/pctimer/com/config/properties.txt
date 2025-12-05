@@ -1,3 +1,3 @@
- WorkTime=40
-BreakTime=10
-     Font=10
+ WorkTime=32
+BreakTime=11
+     Font=12

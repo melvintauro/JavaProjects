@@ -37,13 +37,27 @@ package pctimer.com;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 import javax.swing.*;
 
 public class TrayIconDemo {
+static String threadMessage;
+static DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm");	
+public static MyThread t1 = new MyThread(); 
+	
     public static void main(String[] args) {
         /* Use an appropriate Look and Feel */
-    	
-    	 
+    	   	// Creating thread
+      
+       	// Starting thread
+        t1.start(); 
+        
+        //additional time display on diaglog box when double clicking
+      
+      
+      	
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
             //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
@@ -68,7 +82,7 @@ public class TrayIconDemo {
     }
     
     private static void createAndShowGUI() {
-    	
+   
     	GuiSettings Gs= new GuiSettings();
         //Check the SystemTray support
         if (!SystemTray.isSupported()) {
@@ -78,18 +92,18 @@ public class TrayIconDemo {
         final PopupMenu popup = new PopupMenu();
         final TrayIcon trayIcon =
                 new TrayIcon(createImage("images/pcworker.png", "tray icon"));
-                trayIcon.setImageAutoSize(true);
+                
         final SystemTray tray = SystemTray.getSystemTray();
                          trayIcon.setImageAutoSize(true);
         // Create a popup menu components
         MenuItem aboutItem = new MenuItem("About");
         CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
         CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
-        Menu displayMenu = new Menu("Display");
-        MenuItem errorItem = new MenuItem("Error");
-        MenuItem warningItem = new MenuItem("Warning");
+        Menu displayMenu = new Menu("Actions");
+        MenuItem errorItem = new MenuItem("Settings");
+        MenuItem warningItem = new MenuItem("History");
         MenuItem infoItem = new MenuItem("Info");
-        MenuItem noneItem = new MenuItem("None");
+        MenuItem noneItem = new MenuItem("Restart");
         MenuItem exitItem = new MenuItem("Exit");
         
         //Add components to popup menu
@@ -117,14 +131,17 @@ public class TrayIconDemo {
         trayIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null,
-                        "This dialog box is run from System Tray");
+                		"BreakTimeStatus:- " + Boolean.toString(t1.breakTimeStatus)+
+                        "\nWorkTimeStatus:- " + Boolean.toString(t1.workTimeStatus)+
+                         "\nNext Alarm:- " + t1.additionalTime.format(myFormatObj)
+                );
             }
         });
         
         aboutItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null,
-                        "Code updates by Melvin Tauro 21-NOV-2025");
+                        "Project Melvin Tauro 21-NOV-2025");
                
             }
         });
@@ -144,7 +161,9 @@ public class TrayIconDemo {
             public void itemStateChanged(ItemEvent e) {
                 int cb2Id = e.getStateChange();
                 if (cb2Id == ItemEvent.SELECTED){
-                    trayIcon.setToolTip("Sun TrayIcon");
+                    trayIcon.setToolTip("BreakTimeStatus:- " + Boolean.toString(t1.breakTimeStatus)+
+                            "\nWorkTimeStatus:- " + Boolean.toString(t1.workTimeStatus)+
+                            "\nNext Alarm:- " + t1.additionalTime.format(myFormatObj));
                 } else {
                     trayIcon.setToolTip(null);
                 }
@@ -156,26 +175,37 @@ public class TrayIconDemo {
                 MenuItem item = (MenuItem)e.getSource();
                 //TrayIcon.MessageType type = null;
                 System.out.println(item.getLabel());
-                if ("Error".equals(item.getLabel())) {
+                if ("Settings".equals(item.getLabel())) {
                     //type = TrayIcon.MessageType.ERROR;
                     trayIcon.displayMessage("Sun TrayIcon Demo",
                             "This is an error message", TrayIcon.MessageType.ERROR);
                     Gs.slider();
                     
-                } else if ("Warning".equals(item.getLabel())) {
+                } else if ("History".equals(item.getLabel())) {
                     //type = TrayIcon.MessageType.WARNING;
                     trayIcon.displayMessage("Sun TrayIcon Demo",
                             "This is a warning message", TrayIcon.MessageType.WARNING);
+                    //table frame activate here 
+                    t1.td.setVisible(true);
+                    
+                    
                     
                 } else if ("Info".equals(item.getLabel())) {
                     //type = TrayIcon.MessageType.INFO;
                     trayIcon.displayMessage("Sun TrayIcon Demo",
                             "This is an info message", TrayIcon.MessageType.INFO);
                     
-                } else if ("None".equals(item.getLabel())) {
+                } else if ("Restart".equals(item.getLabel())) {
                     //type = TrayIcon.MessageType.NONE;
-                    trayIcon.displayMessage("Sun TrayIcon Demo",
-                            "This is an ordinary message", TrayIcon.MessageType.NONE);
+                	//restart the parameters in thread.
+                t1.breakTimeStatus=false;
+                t1.workTimeStatus=true;
+                	t1.additionalTime=LocalTime.now().plusMinutes(t1.workTime);
+                
+                	trayIcon.displayMessage("BreakTimeStatus:- " + Boolean.toString(t1.breakTimeStatus)+
+                            "\nWorkTimeStatus:- " + Boolean.toString(t1.workTimeStatus)
+                            ,"\nNext Alarm:- " + t1.additionalTime.format(myFormatObj)
+                            , TrayIcon.MessageType.NONE);
                 }
             }
         };

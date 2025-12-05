@@ -6,9 +6,11 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
 import javax.swing.*;
 class GuiSettings extends JFrame implements ChangeListener, ActionListener {
+ URL imageURL = TrayIconDemo.class.getResource("images/settings.png");	
  FileUtil FU = new FileUtil();
     // frame
     static JFrame f;
@@ -24,12 +26,12 @@ class GuiSettings extends JFrame implements ChangeListener, ActionListener {
 
     // main class
    // public static void main(String[] args)
-    public void  slider()
+    public void  slider ()
     {
         // create a new frame
         f = new JFrame("frame");
-        ImageIcon imgicon = new ImageIcon("images/pcworker.png");
-                f.setIconImage(imgicon.getImage());
+    
+                f.setIconImage(new ImageIcon(imageURL).getImage());
 
         // create a object
         GuiSettings s = new  GuiSettings();
@@ -39,7 +41,7 @@ class GuiSettings extends JFrame implements ChangeListener, ActionListener {
 
         // create a panel
         JPanel p = new JPanel();
-        
+       
 
         // create a slider
         b1 = new JSlider(25, 40, 40);
@@ -91,6 +93,8 @@ class GuiSettings extends JFrame implements ChangeListener, ActionListener {
      
         // set the size of frame
         f.setSize(300, 300);
+        f.setTitle("Settings");
+        f.setLocation(500,220);
 
         f.show();
    

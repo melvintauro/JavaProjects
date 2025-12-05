@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner; 
 
@@ -20,8 +21,13 @@ public class FileUtil {
         System.out.println("Working Directory = " + location);
         Path path = Paths.get(location+"/src/pctimer/com/config/properties.txt");
         System.out.println(path.toString());
-        List<String> lines = List.of(" WorkTime="+varWorkTime , "BreakTime="+varBreakTime,"     Font="+varFont);
+        List<String> lines = new ArrayList<>();
         
+        lines.add(" WorkTime="+varWorkTime);
+        lines.add("BreakTime="+varBreakTime);
+        lines.add("     Font="+varFont);
+        //List.of(" WorkTime="+varWorkTime , "BreakTime="+varBreakTime,"     Font="+varFont);
+        //above line will work with java higher versions.
         try {
             Files.write(path, lines, StandardCharsets.UTF_8);
             File myObj = new File(path.toString());

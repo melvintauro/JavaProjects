@@ -11,17 +11,20 @@ import java.net.URL;
 import javax.swing.*;
 class GuiSettings extends JFrame implements ChangeListener, ActionListener {
  URL imageURL = TrayIconDemo.class.getResource("images/settings.png");	
- FileUtil FU = new FileUtil();
+ FileUtil FU = new FileUtil(); // create File utility object.
+ MyThread MT = new MyThread();
+ 
+ 
     // frame
     static JFrame f;
 
     // slider
-    static JSlider b1;
-    static JSlider b2;
-    static JSlider b3;
+    static JSlider s1;
+    static JSlider s2;
+    static JSlider s3;
 
     // label
-    static JLabel l;
+    static JLabel l1,l2,l3;
       Button bu;
 
     // main class
@@ -30,67 +33,91 @@ class GuiSettings extends JFrame implements ChangeListener, ActionListener {
     {
         // create a new frame
         f = new JFrame("frame");
+        
     
-                f.setIconImage(new ImageIcon(imageURL).getImage());
+        f.setIconImage(new ImageIcon(imageURL).getImage());
 
         // create a object
         GuiSettings s = new  GuiSettings();
 
         // create label
-        l = new JLabel();
-
+        l1 = new JLabel();
+        l2 = new JLabel();
+        l3 = new JLabel();
+        
         // create a panel
-        JPanel p = new JPanel();
-       
-
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        GridLayout g1=new GridLayout(4,3);
+        g1.setHgap(10);
+        p1.setLayout(g1);
+        GridLayout g2=new GridLayout(0, 3);
+        g2.setHgap(10);
+        p2.setLayout(g2);
+        
+ 
         // create a slider
-        b1 = new JSlider(25, 40, 40);
-        b2 = new JSlider(5, 15, 15);
-        b3 = new JSlider(0, 14, 12);
+        s1 = new JSlider(25, 50,TrayIconDemo.t1.workTime);
+        s2 = new JSlider(10, 20, TrayIconDemo.t1.breakTime);
+        s3 = new JSlider(12, 20, FU.fileDBData[2]);
         bu= new Button("Save");
+        p2.add(new Label(""));
+        
         
         // paint the ticks and tracks
-        b1.setPaintTrack(true);
-        b1.setPaintTicks(true);
-        b1.setPaintLabels(true);
-        b2.setPaintTrack(true);
-        b2.setPaintTicks(true);
-        b2.setPaintLabels(true);
-        b3.setPaintTrack(true);
-        b3.setPaintTicks(true);
-        b3.setPaintLabels(true);
+        s1.setPaintTrack(true);
+        s1.setPaintTicks(true);
+        s1.setPaintLabels(true);
+        s2.setPaintTrack(true);
+        s2.setPaintTicks(true);
+        s2.setPaintLabels(true);
+        s3.setPaintTrack(true);
+        s3.setPaintTicks(true);
+        s3.setPaintLabels(true);
 
 
 
         // set spacing
-        b1.setMajorTickSpacing(50);
-        b1.setMinorTickSpacing(5);
-        b2.setMajorTickSpacing(50);
-        b2.setMinorTickSpacing(5);
-        b3.setMajorTickSpacing(50);
-        b3.setMinorTickSpacing(5);
+        s1.setMajorTickSpacing(50);
+        s1.setMinorTickSpacing(5);
+        s2.setMajorTickSpacing(50);
+        s2.setMinorTickSpacing(5);
+        s3.setMajorTickSpacing(50);
+        s3.setMinorTickSpacing(5);
 
         
         
         // setChangeListener
-        b1.addChangeListener(s);
-        b2.addChangeListener(s);
-        b3.addChangeListener(s);
+        s1.addChangeListener(s);
+        s2.addChangeListener(s);
+        s3.addChangeListener(s);
+        
         // add slider to panel
-        p.add(b1);
-        p.add(b2);
-        p.add(b3);
-        p.add(l);
-        p.add(bu);
-
-        f.add(p);
+       // p1.add(new Label(" "));
+        p1.add(l1,BorderLayout.CENTER);
+        p1.add(s1,BorderLayout.CENTER);
+        
+        p1.add(l2,BorderLayout.CENTER);
+        p1.add(s2,BorderLayout.CENTER);
+        
+        p1.add(l3,BorderLayout.CENTER);
+        p1.add(s3,BorderLayout.CENTER);
+        
+        p2.add(new Label(""),BorderLayout.CENTER);
+        p2.add(bu,BorderLayout.CENTER);
+        p2.add(new Label(""),BorderLayout.CENTER);
+        p1.add(p2);
+        
+        f.add(p1,BorderLayout.CENTER);
+        
         
         
         
 
         // set the text of label
-        l.setText("value of Slider is =" + b1.getValue());
-     
+        l1.setText("Set Work Time =" + s1.getValue());
+        l2.setText("Set Break Time =" + s2.getValue());
+        l3.setText("Set Font =" + s3.getValue());
         // set the size of frame
         f.setSize(300, 300);
         f.setTitle("Settings");
@@ -112,16 +139,19 @@ class GuiSettings extends JFrame implements ChangeListener, ActionListener {
     // if JSlider value is changed
     public void stateChanged(ChangeEvent e)
     {
-        l.setText("value of Slider is =" + b1.getValue());
-        l.setText("value of Slider is =" + b2.getValue());
-        l.setText("value of Slider is =" + b3.getValue());
+        l1.setText("Set Work Time =" + s1.getValue());
+        l2.setText("Set Break Time =" + s2.getValue());
+        l3.setText("Set Font  =" + s3.getValue());
     }
     
     
     
     public void actionPerformed(ActionEvent e){
             	System.out.println("inside button");
-           	 FU.fileWrite(Integer.toString(b1.getValue()),Integer.toString(b2.getValue()),Integer.toString(b3.getValue()));
-            }
+           	 FU.fileWrite(Integer.toString(s1.getValue()),Integer.toString(s2.getValue()),Integer.toString(s3.getValue()));
+             
+           	 TrayIconDemo.t1.workTime = s1.getValue();
+           	TrayIconDemo.t1.breakTime = s2.getValue();
+           			 }
     
 }

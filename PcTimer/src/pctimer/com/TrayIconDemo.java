@@ -1,33 +1,4 @@
-/*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   - Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- *   - Neither the name of Oracle or the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+
 
 package pctimer.com;  
 /*
@@ -41,17 +12,21 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
 
 public class TrayIconDemo {
 static String threadMessage;
 static DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm");	
-public static MyThread t1 = new MyThread(); 
+public static MyThread t1 = new MyThread();
+public static FileUtil fu1=new FileUtil();
+public static TrayIcon trayIcon =
+new TrayIcon(createImage("images/pcworker.png", "tray icon"));
 	
     public static void main(String[] args) {
         /* Use an appropriate Look and Feel */
     	   	// Creating thread
       
-       	// Starting thread
+       	// Starting thread to count workbreaktiem
         t1.start(); 
         
         //additional time display on diaglog box when double clicking
@@ -59,8 +34,8 @@ public static MyThread t1 = new MyThread();
       
       	
         try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         } catch (UnsupportedLookAndFeelException ex) {
             ex.printStackTrace();
         } catch (IllegalAccessException ex) {
@@ -81,7 +56,7 @@ public static MyThread t1 = new MyThread();
         });
     }
     
-    private static void createAndShowGUI() {
+ private static void createAndShowGUI() {
    
     	GuiSettings Gs= new GuiSettings();
         //Check the SystemTray support
@@ -90,29 +65,37 @@ public static MyThread t1 = new MyThread();
             return;
         }
         final PopupMenu popup = new PopupMenu();
-        final TrayIcon trayIcon =
-                new TrayIcon(createImage("images/pcworker.png", "tray icon"));
+        
+        //set the font  
+        popup.setFont(new Font("Verdana", Font.PLAIN, 12));
+        UIManager.put("OptionPane.font", new FontUIResource(new Font("Verdana", Font.PLAIN, 12)));
                 
         final SystemTray tray = SystemTray.getSystemTray();
                          trayIcon.setImageAutoSize(true);
         // Create a popup menu components
+        MenuItem resetItem = new MenuItem("Restart");
         MenuItem aboutItem = new MenuItem("About");
+        MenuItem historyItem = new MenuItem("Event History");
         CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
         CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
         Menu displayMenu = new Menu("Actions");
         MenuItem errorItem = new MenuItem("Settings");
-        MenuItem warningItem = new MenuItem("History");
+        MenuItem warningItem = new MenuItem("Data");
         MenuItem infoItem = new MenuItem("Info");
         MenuItem noneItem = new MenuItem("Restart");
         MenuItem exitItem = new MenuItem("Exit");
         
         //Add components to popup menu
+        popup.add(resetItem);
+        popup.addSeparator();
+        popup.add(historyItem);
         popup.add(aboutItem);
         popup.addSeparator();
         popup.add(cb1);
         popup.add(cb2);
         popup.addSeparator();
         popup.add(displayMenu);
+        popup.add(aboutItem);
         displayMenu.add(errorItem);
         displayMenu.add(warningItem);
         displayMenu.add(infoItem);
@@ -121,19 +104,21 @@ public static MyThread t1 = new MyThread();
         
         trayIcon.setPopupMenu(popup);
         
+     
+        
         try {
             tray.add(trayIcon);
         } catch (AWTException e) {
             System.out.println("TrayIcon could not be added.");
+                        
             return;
         }
         
         trayIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null,
-                		"BreakTimeStatus:- " + Boolean.toString(t1.breakTimeStatus)+
-                        "\nWorkTimeStatus:- " + Boolean.toString(t1.workTimeStatus)+
-                         "\nNext Alarm:- " + t1.additionalTime.format(myFormatObj)
+              
+            	JOptionPane.showMessageDialog(null,
+                		getMessageInfoStatus()  //called when tray icon is double clicked
                 );
             }
         });
@@ -145,7 +130,33 @@ public static MyThread t1 = new MyThread();
                
             }
         });
+        resetItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	//restart the parameters in thread.
+              	setRestartThreadParameters()   ; 
+             	trayIcon.setToolTip(getMessageInfoStatus()); //reset the tool tip message
+             //	trayIcon.displayMessage(getMessageInfoStatus(),""                        , TrayIcon.MessageType.NONE);
+               
+            }
+        });
+        historyItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            //	t1.td.setVisible(true);
+            	 //table frame activate here 
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        //Turn off metal's use of bold fonts
+        	        UIManager.put("swing.boldMetal", Boolean.FALSE);
+        	        TableDemo.createAndShowGUI();
+                    }
+                });
+               
+            }
+        });
         
+        
+        
+        // check box action event below.
         cb1.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 int cb1Id = e.getStateChange();
@@ -153,6 +164,7 @@ public static MyThread t1 = new MyThread();
                     trayIcon.setImageAutoSize(true);
                 } else {
                     trayIcon.setImageAutoSize(false);
+                    
                 }
             }
         });
@@ -161,9 +173,7 @@ public static MyThread t1 = new MyThread();
             public void itemStateChanged(ItemEvent e) {
                 int cb2Id = e.getStateChange();
                 if (cb2Id == ItemEvent.SELECTED){
-                    trayIcon.setToolTip("BreakTimeStatus:- " + Boolean.toString(t1.breakTimeStatus)+
-                            "\nWorkTimeStatus:- " + Boolean.toString(t1.workTimeStatus)+
-                            "\nNext Alarm:- " + t1.additionalTime.format(myFormatObj));
+                    trayIcon.setToolTip(getMessageInfoStatus());
                 } else {
                     trayIcon.setToolTip(null);
                 }
@@ -179,14 +189,21 @@ public static MyThread t1 = new MyThread();
                     //type = TrayIcon.MessageType.ERROR;
                     trayIcon.displayMessage("Sun TrayIcon Demo",
                             "This is an error message", TrayIcon.MessageType.ERROR);
-                    Gs.slider();
+                    Gs.slider();  // call the slider GUI 
+                   
                     
-                } else if ("History".equals(item.getLabel())) {
+                } else if ("Data".equals(item.getLabel())) {
                     //type = TrayIcon.MessageType.WARNING;
                     trayIcon.displayMessage("Sun TrayIcon Demo",
                             "This is a warning message", TrayIcon.MessageType.WARNING);
                     //table frame activate here 
-                    t1.td.setVisible(true);
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            //Turn off metal's use of bold fonts
+            	        UIManager.put("swing.boldMetal", Boolean.FALSE);
+            	        ToolBarDemo.createAndShowGUI();
+                        }
+                    });
                     
                     
                     
@@ -198,14 +215,9 @@ public static MyThread t1 = new MyThread();
                 } else if ("Restart".equals(item.getLabel())) {
                     //type = TrayIcon.MessageType.NONE;
                 	//restart the parameters in thread.
-                t1.breakTimeStatus=false;
-                t1.workTimeStatus=true;
-                	t1.additionalTime=LocalTime.now().plusMinutes(t1.workTime);
-                
-                	trayIcon.displayMessage("BreakTimeStatus:- " + Boolean.toString(t1.breakTimeStatus)+
-                            "\nWorkTimeStatus:- " + Boolean.toString(t1.workTimeStatus)
-                            ,"\nNext Alarm:- " + t1.additionalTime.format(myFormatObj)
-                            , TrayIcon.MessageType.NONE);
+                	setRestartThreadParameters()   ; 
+              //  	trayIcon.setToolTip(getMessageInfoStatus()); //reset the tool tip message
+               // 	trayIcon.displayMessage(getMessageInfoStatus(),"" , TrayIcon.MessageType.NONE);
                 }
             }
         };
@@ -234,4 +246,32 @@ public static MyThread t1 = new MyThread();
             return (new ImageIcon(imageURL, description)).getImage();
         }
     }
+  //Create a status Message
+    protected static String getMessageInfoStatus()
+    {
+    	   String messageInfoStatus = new String(
+    			      "\n   WorkTime:- " + Boolean.toString(t1.workTimeStatus)+
+    			      "\n  StartTime:- " + t1.currentLocalTime.format(myFormatObj)+
+                   "\nNext Alarm:- " + t1.additionalTime.format(myFormatObj)	   
+    			   
+    			   );
+    
+    return messageInfoStatus;
+    }
+
+  //restart the parameters in thread.
+    protected static void setRestartThreadParameters()
+    {   
+      	t1.breakTimeStatus=false;
+        t1.workTimeStatus=true;
+        	t1.additionalTime=LocalTime.now().plusMinutes(t1.workTime);
+        	t1.currentLocalTime=LocalTime.now();
+        
+        	 System.out.println(t1.workTime+" setRestartThreadParameters " + t1.breakTime +" " +t1.additionalTime );
+  
+	t1.addARecord("Reset Time:-");
+	
+    }
+    
+
 }

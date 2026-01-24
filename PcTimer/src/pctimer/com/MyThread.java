@@ -6,7 +6,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-
+import javax.swing.table.DefaultTableModel;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -35,7 +35,7 @@ class MyThread extends Thread
 	String threadMessage;
 	//TableDemo td =new TableDemo();
     DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm");
-    
+    static CheckboxTableModel tableModel = null;
 		
 	// Overriding the run method
   	@Override
@@ -45,10 +45,11 @@ class MyThread extends Thread
   		dialog.setLayout(new GridBagLayout());
   		dialog.add(dialogLabel);
   		dialog.setPreferredSize(new java.awt.Dimension(200,200));
-  		dialog.setLocation(500,200);
+  		dialog.setLocation(600,250);  //500,200
   		dialog.setIconImage(new ImageIcon(imageURL).getImage());
   		dialog.setTitle ("Action Status");
   		  		dialog.pack();
+  		  		createTableModel();
   		
   		while(exit) {
                
@@ -123,7 +124,7 @@ class MyThread extends Thread
   		
   		TableDemo.addRow(varWorkTimeText+Boolean.toString(workTimeStatus),LocalTime.now().format(myFormatObj),
   additionalTime.format(myFormatObj),Long.toString((additionalTime.toSecondOfDay()-currentLocalTime.toSecondOfDay())/60)
-  			 
+   
   				);
   
   		} 
@@ -141,4 +142,20 @@ class MyThread extends Thread
   		for(int i=0;i<j;i++)
   		Toolkit.getDefaultToolkit().beep();//beep from pc speaker
   	}
+    
+  	 public void createTableModel()
+  	 {
+  		 //create table model
+		 tableModel= new CheckboxTableModel();
+		 tableModel.addColumn("Status");
+         tableModel.addColumn("Start");
+         tableModel.addColumn("End");
+         tableModel.addColumn("Gap in Min");
+         tableModel.addColumn("Select");
+  	
+         
+  	 }
+
+
+
 }

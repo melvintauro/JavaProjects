@@ -58,7 +58,7 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
     
  private static void createAndShowGUI() {
    
-    	GuiSettings Gs= new GuiSettings();
+    	GuiSettings2 Gs= new GuiSettings2();
         //Check the SystemTray support
         if (!SystemTray.isSupported()) {
             System.out.println("SystemTray is not supported");
@@ -76,6 +76,9 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
         MenuItem resetItem = new MenuItem("Restart");
         MenuItem aboutItem = new MenuItem("About");
         MenuItem historyItem = new MenuItem("Event History");
+        MenuShortcut shortcut = new MenuShortcut(KeyEvent.VK_E);
+        historyItem.setShortcut(shortcut);
+      
         CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
         CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
         Menu displayMenu = new Menu("Actions");
@@ -126,7 +129,7 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
         aboutItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null,
-                        "Project Melvin Tauro 21-NOV-2025");
+                        "Project 21-NOV-2025 /n" + "https://github.com/melvintauro/JavaProjects");
                
             }
         });
@@ -141,8 +144,7 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
         });
         historyItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            //	t1.td.setVisible(true);
-            	 //table frame activate here 
+           
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         //Turn off metal's use of bold fonts
@@ -208,16 +210,14 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
                     
                     
                 } else if ("Info".equals(item.getLabel())) {
-                    //type = TrayIcon.MessageType.INFO;
+                  
                     trayIcon.displayMessage("Sun TrayIcon Demo",
                             "This is an info message", TrayIcon.MessageType.INFO);
                     
                 } else if ("Restart".equals(item.getLabel())) {
-                    //type = TrayIcon.MessageType.NONE;
-                	//restart the parameters in thread.
+                    
                 	setRestartThreadParameters()   ; 
-              //  	trayIcon.setToolTip(getMessageInfoStatus()); //reset the tool tip message
-               // 	trayIcon.displayMessage(getMessageInfoStatus(),"" , TrayIcon.MessageType.NONE);
+              
                 }
             }
         };

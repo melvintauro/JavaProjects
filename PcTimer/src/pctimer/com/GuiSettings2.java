@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 
 import javax.swing.*;
-class GuiSettings extends JPanel implements ChangeListener, ActionListener {
+class GuiSettings2 extends JPanel implements ChangeListener, ActionListener {
  URL imageURL = TrayIconDemo.class.getResource("images/settings.png");	
  FileUtil FU = new FileUtil(); // create File utility object.
  MyThread MT = new MyThread();
@@ -28,7 +28,7 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
       Button bu;
 
 
-      public GuiSettings() {
+      public GuiSettings2() {
   		super (new GridLayout(0, 3));
       
   		addSliders();
@@ -57,7 +57,7 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
         f.setIconImage(new ImageIcon(imageURL).getImage());
 
         // create a object
-        GuiSettings s = new  GuiSettings();
+        GuiSettings2 s = new  GuiSettings2();
 
         // create label
         l1 = new JLabel();

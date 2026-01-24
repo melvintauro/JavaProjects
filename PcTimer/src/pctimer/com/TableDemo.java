@@ -12,8 +12,10 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -32,9 +34,11 @@ public class TableDemo extends JPanel implements ActionListener {
     static final private String RESET = "RESET";
     static final private String SETTING = "SETTING";
     
-    static DefaultTableModel tableModel = new DefaultTableModel();
+    
     static JFrame frame=null;
     static Boolean frameExists = true;
+
+
 	
 
 	public TableDemo() {
@@ -42,23 +46,20 @@ public class TableDemo extends JPanel implements ActionListener {
 		
 		//Create the toolbar.
 		 JToolBar toolBar = new JToolBar("Still draggable");
-		 addButtons(toolBar);
+         
+         
+         addButtons(toolBar);
 		 
-		 //create table model
-		 
-		  tableModel.addColumn("Status");
-          tableModel.addColumn("Start");
-          tableModel.addColumn("End");
-          tableModel.addColumn("Gap in Min");
-          
+		
 		  //Create the table area
-		 JTable table = new JTable(tableModel);
+		 JTable table = new JTable(MyThread.tableModel);
 		 JScrollPane scrollPane = new JScrollPane(table);
 	
 		//Lay out the main panel.
 		    setPreferredSize(new Dimension(450, 130));
 	        add(toolBar, BorderLayout.PAGE_START);
 	        add(scrollPane, BorderLayout.CENTER);
+	        
 	}
       
         
@@ -118,21 +119,24 @@ return button;
 }
 
       
-    static  public void addRow(String a,String b , String c,String d)
+      static  public void addRow(String a,String b , String c,String d)
       {
-    	  tableModel.addRow(new Object[] { a, b,c,d });
+    	   Object[] data= { a, b,c,d,Boolean.FALSE};
+    	 
+    	    MyThread.tableModel.addRow(data);
 
     	  
       }
       
-     
-  // button action write here
+   
+
+	  // button action write here
       public void actionPerformed(ActionEvent e){
     	  String buttonCmd = e.getActionCommand();
     	if(CLEAR.equals(buttonCmd))  
       	{
-        while(tableModel.getRowCount()>3)
-      	tableModel.removeRow(0);
+        while( MyThread.tableModel.getRowCount()>3)
+        	 MyThread.tableModel.removeRow(0);
       	}
     	else if(RESET.equals(buttonCmd))
     	{
@@ -140,7 +144,7 @@ return button;
     		TrayIconDemo.setRestartThreadParameters();
     	} else if(SETTING.equals(buttonCmd))
     	{
-    		new GuiSettings().slider();
+    		new GuiSettings2().slider();
     		
     	}
     	

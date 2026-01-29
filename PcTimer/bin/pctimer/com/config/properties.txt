@@ -1,3 +1,0 @@
- WorkTime=32
-BreakTime=11
-     Font=12

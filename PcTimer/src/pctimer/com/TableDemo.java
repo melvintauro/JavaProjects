@@ -1,0 +1,294 @@
+
+package pctimer.com; 
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import java.io.File;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class TableDemo extends JPanel implements ActionListener {
+	static URL imageURL = TrayIconDemo.class.getResource("images/record.png");
+	//URL imageURL1 = TrayIconDemo.class.getResource("images/deleterow.gif");
+	//URL imageURL2 = TrayIconDemo.class.getResource("images/reset.png");
+	
+	static final private String CLEAR = "CLEAR";
+    static final private String RESET = "RESET";
+    static final private String SETTING = "SETTING";
+    static final private String SAVE = "SAVE";
+    static final private String PRINT = "PRINT";
+    
+    static JFrame frame=null;
+    static Boolean frameExists = true;
+    static JTable table =null;
+     static public String textTotalWorkHours ;
+    
+    
+    public static JLabel labelTotalWorkHours ;
+    
+    MessageFormat header = new MessageFormat(" Total Screen Time :-");
+ // "{0}" in the footer format is replaced by the current page number
+ MessageFormat footer = new MessageFormat("Page {0}"); 
+    
+   
+
+	
+
+	public TableDemo() {
+		super (new BorderLayout());
+		
+		//Create the toolbar.
+		 JToolBar toolBar = new JToolBar("Still draggable");
+         
+         
+         addButtons(toolBar);
+		 labelTotalWorkHours = new JLabel();
+		 TableDemo.labelTotalWorkHours.setText(" Total Screen Time :- ");
+		 
+		 
+		
+		  //Create the table area
+	          table = new JTable(MyThread.tableModel);
+		 JScrollPane scrollPane = new JScrollPane(table);
+		  table.getModel().addTableModelListener(MyThread.tableModel);
+		 
+	
+		//Lay out the main panel.
+		    setPreferredSize(new Dimension(450, 130));
+	        add(toolBar, BorderLayout.PAGE_START);
+	        add(labelTotalWorkHours,BorderLayout.PAGE_END );
+	        add(scrollPane, BorderLayout.CENTER);
+	       
+	        
+	        
+	}
+      
+ 
+  
+         
+     
+
+      
+      protected void addButtons(JToolBar toolBar) {
+          JButton button = null;
+
+          //first button
+          button = makeNavigationButton("deleterow",CLEAR ,
+                                        "Clear Record from table",
+                                        "Clear");
+          toolBar.add(button);
+
+          //second button
+          button = makeNavigationButton("reset",RESET,
+        		                             "Reset Record from table" + textTotalWorkHours,
+                                        "Reset");
+          toolBar.add(button);
+
+        //THIRD  button
+          button = makeNavigationButton("setting",SETTING,
+        		                             "Setting for Application",
+                                        "Setting");
+          toolBar.add(button);
+      
+        //FOURTH button
+          button = makeNavigationButton("save",SAVE,
+        		                             "Save the table",
+                                        "save");
+          toolBar.add(button);
+      
+          //FIFTH BUTTON
+          button = makeNavigationButton("print",PRINT,
+                  "print the table",
+             "print");
+          toolBar.add(button);
+          
+      
+      }
+      
+      protected JButton makeNavigationButton(String imageName,
+              String actionCommand,
+              String toolTipText,
+              String altText) {
+    	  //Look for the image.
+          String imgLocation = "images/"
+                               + imageName
+                               + ".gif";
+          URL imageURL = TrayIconDemo.class.getResource(imgLocation); 
+
+//Create and initialize the button.
+JButton button = new JButton();
+button.setActionCommand(actionCommand);
+button.setToolTipText(toolTipText);
+button.addActionListener(this);
+
+if (imageURL != null) {                      //image found
+    button.setIcon(new ImageIcon(imageURL, altText));
+} else {                                     //no image found
+    button.setText(altText);
+    System.err.println("Resource not found: "
+                       + imgLocation);
+}
+
+return button;
+}
+
+      
+      static  public void addRow(String a,String b , String c,String d)
+      {
+    	   Object[] data= { a, b,c,d,Boolean.FALSE};
+    	 
+    	    MyThread.tableModel.addRow(data);
+
+    	  
+      }
+      
+   
+
+	  // button action write here
+      public void actionPerformed(ActionEvent e){
+    	  String buttonCmd = e.getActionCommand();
+    	if(CLEAR.equals(buttonCmd))  
+      	{
+        while( MyThread.tableModel.getRowCount()>1)
+        	 MyThread.tableModel.removeRow(0);
+      	}
+    	else if(RESET.equals(buttonCmd))
+    	{
+    		
+    		TrayIconDemo.setRestartThreadParameters();
+    	} else if(SETTING.equals(buttonCmd))
+    	{
+    		new GuiSettings2().slider();
+    		
+    	}
+    	
+    	else if(SAVE.equals(buttonCmd))
+    	{
+    		
+    		convertToCSV(table,
+    				"C:/Users/Melvin.Tauro/Saved Games/tablereport/"+ LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"))+".csv");
+    	}
+    	
+    	
+    	else if(PRINT.equals(buttonCmd))
+    	{
+    		
+    		printTable(table);
+    	}
+    	
+    	
+      }
+
+   // save tool bar button 
+
+   public static boolean convertToCSV(JTable table,
+                                      String path) {
+   try {
+       TableModel model = table.getModel();
+       FileWriter csv = new FileWriter(new File(path));
+
+       for (int i = 0; i < model.getColumnCount(); i++) {
+           csv.write(model.getColumnName(i) + ",");
+       }
+       csv.write("\n");
+
+       for (int i = 0; i < model.getRowCount(); i++) {
+           for (int j = 0; j < model.getColumnCount(); j++) {
+               csv.write(model.getValueAt(i, j).toString() + ",");
+           }
+           
+          
+           csv.write("\n");
+       }
+       csv.write("\n");
+       csv.write(labelTotalWorkHours.getText());
+       csv.write("\n");
+       csv.close();
+       return true;
+   } catch (IOException e) {
+       e.printStackTrace();
+   }
+   return false;
+   }
+
+// print tool bar button 
+   public void printTable(JTable table) {  
+   try {
+	    // PrintMode.FIT_WIDTH scales the table to fit the page width
+	    table.print(JTable.PrintMode.FIT_WIDTH, header, footer,true,null,true,null);
+	} catch (PrinterException e) {
+	    JOptionPane.showMessageDialog(null, "Printing Failed: " + e.getMessage(), "Print Error", JOptionPane.ERROR_MESSAGE);
+	    e.printStackTrace();
+	}  
+   }
+
+      static void createAndShowGUI() {
+    	  
+    	      if (frameExists== true)
+    	      {   //Create and set up the window.
+             frame = new JFrame("TableDemo");
+          //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+          //Add content to the window.
+          frame.add(new TableDemo());
+          try {
+			frame.setIconImage(new ImageIcon(imageURL).getImage());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+          frame.setTitle("Event History");
+          frame.setFont(new Font("Verdana", Font.PLAIN, 18));
+          frame.setLocation(450,300);
+       
+          //Display the window.
+          frame.pack();
+          frame.setVisible(true);
+          frameExists=false;
+    	      }else {   frame.setVisible(true);        } 
+        
+      
+      }
+
+
+
+
+
+
+
+
+} 
+      
+               

@@ -19,8 +19,8 @@ class MyThread extends Thread
 	FileUtil fu=new FileUtil(); // create the file util object.
 	URL imageURL = TrayIconDemo.class.getResource("images/bulb.gif");
 	LocalTime currentLocalTime = LocalTime.now();
-    int workTime = fu.fileDBData[0];
-	int breakTime= fu.fileDBData[1];  
+    int workTime = FileUtil.fileDBData[0];
+	int breakTime= FileUtil.fileDBData[1];  
 	int blinkTime = 10;
 	String dialogLabelMessage= "Break Time ";
 	boolean workTimeStatus = true;
@@ -146,13 +146,14 @@ class MyThread extends Thread
   	 public void createTableModel()
   	 {
   		 //create table model
+  		
 		 tableModel= new CheckboxTableModel();
 		 tableModel.addColumn("Status");
          tableModel.addColumn("Start");
          tableModel.addColumn("End");
          tableModel.addColumn("Gap in Min");
          tableModel.addColumn("Select");
-  	
+         
          
   	 }
 

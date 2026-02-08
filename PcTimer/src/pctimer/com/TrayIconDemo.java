@@ -21,7 +21,17 @@ public static MyThread t1 = new MyThread();
 public static FileUtil fu1=new FileUtil();
 public static TrayIcon trayIcon =
 new TrayIcon(createImage("images/pcworker.png", "tray icon"));
-	
+
+public static String textTotalWorkHours ;
+public static JLabel labelTotalWorkHours ;
+public static Font allFont=null;
+
+
+static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel",
+		           "javax.swing.plaf.metal.MetalLookAndFeel",
+		 "com.sun.java.swing.plaf.gtk.GTKLookAndFeel",
+		 "com.sun.java.swing.plaf.motif.MotifLookAndFeel"    };
+
     public static void main(String[] args) {
         /* Use an appropriate Look and Feel */
     	   	// Creating thread
@@ -34,8 +44,11 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
       
       	
         try {
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+          //  UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            UIManager.setLookAndFeel(lfOptions[FileUtil.fileDBData[3]-10]);
+         // UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+            
         } catch (UnsupportedLookAndFeelException ex) {
             ex.printStackTrace();
         } catch (IllegalAccessException ex) {
@@ -57,8 +70,8 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
     }
     
  private static void createAndShowGUI() {
-   
-    	GuiSettings2 Gs= new GuiSettings2();
+	allFont = new Font("Verdana", Font.PLAIN, FileUtil.fileDBData[2]);
+    
         //Check the SystemTray support
         if (!SystemTray.isSupported()) {
             System.out.println("SystemTray is not supported");
@@ -67,8 +80,8 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
         final PopupMenu popup = new PopupMenu();
         
         //set the font  
-        popup.setFont(new Font("Verdana", Font.PLAIN, 12));
-        UIManager.put("OptionPane.font", new FontUIResource(new Font("Verdana", Font.PLAIN, 12)));
+        popup.setFont(allFont);
+        UIManager.put("OptionPane.font", new FontUIResource(new Font("Verdana", Font.PLAIN, FileUtil.fileDBData[2])));
                 
         final SystemTray tray = SystemTray.getSystemTray();
                          trayIcon.setImageAutoSize(true);
@@ -119,10 +132,17 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
         
         trayIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-              
-            	JOptionPane.showMessageDialog(null,
-                		getMessageInfoStatus()  //called when tray icon is double clicked
-                );
+            	 SwingUtilities.invokeLater(new Runnable() {
+                     public void run() {
+                         //Turn off metal's use of bold fonts
+         	       // UIManager.put("swing.boldMetal", Boolean.FALSE);
+         	        TableDemo.createAndShowGUI();
+                     }
+                 });
+          
+            	
+            	//  	JOptionPane.showMessageDialog(null,getMessageInfoStatus()  ); //called when tray icon is double clicked
+               
             }
         });
         
@@ -191,7 +211,7 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
                     //type = TrayIcon.MessageType.ERROR;
                     trayIcon.displayMessage("Sun TrayIcon Demo",
                             "This is an error message", TrayIcon.MessageType.ERROR);
-                    Gs.slider();  // call the slider GUI 
+                    
                    
                     
                 } else if ("Data".equals(item.getLabel())) {
@@ -253,7 +273,7 @@ new TrayIcon(createImage("images/pcworker.png", "tray icon"));
     			      "\n   WorkTime:- " + Boolean.toString(t1.workTimeStatus)+
     			      "\n  StartTime:- " + t1.currentLocalTime.format(myFormatObj)+
                    "\n NextAlarm:- " + t1.additionalTime.format(myFormatObj) +
-                   "\n "+ TableDemo.textTotalWorkHours
+                   "\n "+ TrayIconDemo.textTotalWorkHours
                      
     			   
     			   );

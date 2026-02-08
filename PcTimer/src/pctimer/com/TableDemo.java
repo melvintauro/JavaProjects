@@ -7,10 +7,12 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.BoxLayout;
@@ -27,9 +29,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.io.File;
 
@@ -39,8 +46,11 @@ import java.awt.print.PrinterException;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.event.TableModelEvent;
+
 public class TableDemo extends JPanel implements ActionListener {
 	static URL imageURL = TrayIconDemo.class.getResource("images/record.png");
+	
 	//URL imageURL1 = TrayIconDemo.class.getResource("images/deleterow.gif");
 	//URL imageURL2 = TrayIconDemo.class.getResource("images/reset.png");
 	
@@ -49,14 +59,12 @@ public class TableDemo extends JPanel implements ActionListener {
     static final private String SETTING = "SETTING";
     static final private String SAVE = "SAVE";
     static final private String PRINT = "PRINT";
-    
-    static JFrame frame=null;
-    static Boolean frameExists = true;
+
+	private static final TableModelEvent TableModelEvent = null;
     static JTable table =null;
-     static public String textTotalWorkHours ;
     
-    
-    public static JLabel labelTotalWorkHours ;
+
+   
     
     MessageFormat header = new MessageFormat(" Total Screen Time :-");
  // "{0}" in the footer format is replaced by the current page number
@@ -74,21 +82,29 @@ public class TableDemo extends JPanel implements ActionListener {
          
          
          addButtons(toolBar);
-		 labelTotalWorkHours = new JLabel();
-		 TableDemo.labelTotalWorkHours.setText(" Total Screen Time :- ");
-		 
-		 
-		
+		 TrayIconDemo.labelTotalWorkHours = new JLabel();
+				
 		  //Create the table area
 	          table = new JTable(MyThread.tableModel);
+	          table.setFont(TrayIconDemo.allFont);
 		 JScrollPane scrollPane = new JScrollPane(table);
 		  table.getModel().addTableModelListener(MyThread.tableModel);
 		 
-	
+		  TableColumnModel columnModel =   table.getColumnModel();
+		  columnModel.getColumn(0).setPreferredWidth(130);
+		  columnModel.getColumn(1).setPreferredWidth(60);
+		  columnModel.getColumn(2).setPreferredWidth(60);
+		  columnModel.getColumn(3).setPreferredWidth(60);
+		  
+		// Get the table header
+		  JTableHeader header = table.getTableHeader();
+		// Set the new font to the table header
+		  header.setFont(TrayIconDemo.allFont);
+		  
 		//Lay out the main panel.
-		    setPreferredSize(new Dimension(450, 130));
+		    setPreferredSize(new Dimension(400, 300));
 	        add(toolBar, BorderLayout.PAGE_START);
-	        add(labelTotalWorkHours,BorderLayout.PAGE_END );
+	        add(TrayIconDemo.labelTotalWorkHours,BorderLayout.PAGE_END );
 	        add(scrollPane, BorderLayout.CENTER);
 	       
 	        
@@ -112,7 +128,7 @@ public class TableDemo extends JPanel implements ActionListener {
 
           //second button
           button = makeNavigationButton("reset",RESET,
-        		                             "Reset Record from table" + textTotalWorkHours,
+        		                             "Reset Record from table" + TrayIconDemo.textTotalWorkHours,
                                         "Reset");
           toolBar.add(button);
 
@@ -190,15 +206,23 @@ return button;
     		TrayIconDemo.setRestartThreadParameters();
     	} else if(SETTING.equals(buttonCmd))
     	{
-    		new GuiSettings2().slider();
+    		 SwingUtilities.invokeLater(new Runnable() {
+                 public void run() {
+                     //Turn off metal's use of bold fonts
+     	        UIManager.put("swing.boldMetal", Boolean.FALSE);
+     	       GuiSettings.createAndShowGUI();
+                 }
+             });
     		
     	}
     	
     	else if(SAVE.equals(buttonCmd))
     	{
-    		
-    		convertToCSV(table,
-    				"C:/Users/Melvin.Tauro/Saved Games/tablereport/"+ LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"))+".csv");
+    		String csvFileName =  "/"+LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"))+
+					LocalTime.now().format(DateTimeFormatter.ofPattern("hhmm"))+".csv";
+    		convertToCSV(table,Paths.get(System.getProperty("user.dir")+"/report/"),csvFileName);
+      
+      
     	}
     	
     	
@@ -214,10 +238,12 @@ return button;
    // save tool bar button 
 
    public static boolean convertToCSV(JTable table,
-                                      String path) {
+                                       Path path,String csvFileName) {
    try {
        TableModel model = table.getModel();
-       FileWriter csv = new FileWriter(new File(path));
+       Files.createDirectories(path);
+       FileWriter csv = new FileWriter(new File(path.toString()+csvFileName));
+      
 
        for (int i = 0; i < model.getColumnCount(); i++) {
            csv.write(model.getColumnName(i) + ",");
@@ -233,7 +259,7 @@ return button;
            csv.write("\n");
        }
        csv.write("\n");
-       csv.write(labelTotalWorkHours.getText());
+       csv.write(TrayIconDemo.labelTotalWorkHours.getText());
        csv.write("\n");
        csv.close();
        return true;
@@ -256,11 +282,12 @@ return button;
 
       static void createAndShowGUI() {
     	  
-    	      if (frameExists== true)
-    	      {   //Create and set up the window.
-             frame = new JFrame("TableDemo");
-          //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+    	  
+    	     //Create and set up the window.
+         JFrame  frame = new JFrame("TableDemo");
+          frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+           
+             
           //Add content to the window.
           frame.add(new TableDemo());
           try {
@@ -270,14 +297,12 @@ return button;
 			e.printStackTrace();
 		}
           frame.setTitle("Event History");
-          frame.setFont(new Font("Verdana", Font.PLAIN, 18));
-          frame.setLocation(450,300);
-       
+          frame.setFont(TrayIconDemo.allFont);
+          frame.setLocation(350,100);
+          CheckboxTableModel.timeLabelCreator();
           //Display the window.
           frame.pack();
           frame.setVisible(true);
-          frameExists=false;
-    	      }else {   frame.setVisible(true);        } 
         
       
       }

@@ -5,7 +5,12 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 public class CheckboxTableModel extends DefaultTableModel implements TableModelListener {
-    public CheckboxTableModel() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public CheckboxTableModel() {
         super();
     }
 
@@ -27,7 +32,7 @@ public class CheckboxTableModel extends DefaultTableModel implements TableModelL
     }
 
     
-    public float countCheckedCheckboxes(JTable table, int columnWithCheckboxes) {
+    public static float countCheckedCheckboxes(JTable table, int columnWithCheckboxes) {
         float checkedCount = 0;
         // Always work with the model for consistency, especially if sorting/filtering is applied
         javax.swing.table.TableModel model = table.getModel(); 
@@ -48,16 +53,28 @@ public class CheckboxTableModel extends DefaultTableModel implements TableModelL
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		int hrs = (int)(countCheckedCheckboxes(TableDemo.table,4)/60);
-		int min = (int) (((countCheckedCheckboxes(TableDemo.table,4)/60)-hrs)*60);
 		
-	 TableDemo.textTotalWorkHours= " Total Screen Time  :- "+ hrs +":"+ min;
-	 TableDemo.labelTotalWorkHours.setText(TableDemo.textTotalWorkHours);
-			  
+			  timeLabelCreator();
 		
 	}
 
-	
+	  public static void timeLabelCreator()
+	  {
+		  int hrs = 0; 
+			int min=0;
+			try {
+				hrs = (int)(countCheckedCheckboxes(TableDemo.table,4)/60);
+				min = (int) (((countCheckedCheckboxes(TableDemo.table,4)/60)-hrs)*60);
+							} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			TrayIconDemo.textTotalWorkHours=" Total Screen Time :- " + hrs +":"+ min;
+			TrayIconDemo.labelTotalWorkHours.setText(TrayIconDemo.textTotalWorkHours);
+				  
+		  
+	  }
 
 
 }

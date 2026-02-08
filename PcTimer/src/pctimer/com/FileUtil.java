@@ -13,31 +13,45 @@ import java.util.Scanner;
 
 
 public class FileUtil {
-	int[] fileDBData = {25,15,12}; 
+	static int[]  fileDBData = {25,15,12,12}; 
 		
 	String varWorkTime =Integer.toString(fileDBData[0]);
 	String varBreakTime =Integer.toString(fileDBData[1]);
 	String varFont =Integer.toString(fileDBData[2]);
+	
 	String location = System.getProperty("user.dir");
-    Path path = Paths.get(location+"/src/pctimer/com/config/properties.txt");
+	Path path1 = Paths.get(location+"/config/");
+	
+	Path path = Paths.get(location+"/config/properties.txt");
     File myObj;
     
     
-    FileUtil()//constructor create file if dose not exits else read.
+    FileUtil() //constructor create file if dose not exits else read.
     {  	
+    	try {
+			Files.createDirectories(path1);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
      myObj = new File(path.toString());
  if( 	myObj.exists())
-    	{	fileRead();}else {fileWrite(varWorkTime, varBreakTime,varFont);}
+    	{	fileRead();
+	 
+    	}
+ else {fileWrite(varWorkTime, varBreakTime,varFont,Integer.toString(fileDBData[3]));}
     	   
     } // read the file 
     
 	    
-    public void fileWrite(String s1, String s2, String s3) {
+    public void fileWrite(String s1, String s2, String s3,String s4) {
     	    
         List<String> lines = new ArrayList<>();
         lines.add(" WorkTime="+s1);
         lines.add("BreakTime="+s2);
         lines.add("     Font="+s3);
+        lines.add("       lf="+s4);
         //List.of(" WorkTime="+varWorkTime , "BreakTime="+varBreakTime,"     Font="+varFont);
         //above line will work with java higher versions.
         try {
@@ -57,7 +71,8 @@ public class FileUtil {
         }
     }
 
-    public  void fileRead() {
+    @SuppressWarnings("resource")
+	public  void fileRead() {
      try { 
    // 	File myObj = new File(path.toString());
         Scanner myReader = new Scanner(myObj);
@@ -65,13 +80,13 @@ public class FileUtil {
         while (myReader.hasNextLine()) {
             String data = myReader.nextLine();
             fileDBData[i] = Integer.parseInt(data.substring(10,12));
-           // System.out.print(fileDBData[i]);
+            System.out.print(fileDBData[i]);
         i++;
         }
         varWorkTime =Integer.toString(fileDBData[0]);  
         varBreakTime =Integer.toString(fileDBData[1]);
         varFont =Integer.toString(fileDBData[2]);
-        System.out.println(fileDBData[0]+" fileRead " + fileDBData[1]  );
+       // System.out.println(fileDBData[0]+" fileRead " + fileDBData[1]  );
         
        // myReader.close();
      }catch (IOException e) {

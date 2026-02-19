@@ -14,6 +14,9 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -59,6 +62,7 @@ public class TableDemo extends JPanel implements ActionListener {
     static final private String SETTING = "SETTING";
     static final private String SAVE = "SAVE";
     static final private String PRINT = "PRINT";
+    static final private String singleRow = "singleRow";
 
 	private static final TableModelEvent TableModelEvent = null;
     static JTable table =null;
@@ -150,7 +154,11 @@ public class TableDemo extends JPanel implements ActionListener {
              "print");
           toolBar.add(button);
           
-      
+          //sixth BUTTON
+          button = makeNavigationButton("singlerow",singleRow,
+                  "Single Row Delete",
+             "singleRow");
+          toolBar.add(button);
       }
       
       protected JButton makeNavigationButton(String imageName,
@@ -232,6 +240,19 @@ return button;
     		printTable(table);
     	}
     	
+     	else if(singleRow.equals(buttonCmd))
+    	{
+     		int[] selectedRows = table.getSelectedRows();
+     		
+     		 List<Integer> modelRowsToDelete = new ArrayList<>();
+     	    for (int row : selectedRows) {
+     	        modelRowsToDelete.add(table.convertRowIndexToModel(row));
+     	    }
+     	   Collections.sort(modelRowsToDelete, Collections.reverseOrder());
+     		 for (int modelRowIndex : modelRowsToDelete) {
+     			MyThread.tableModel.removeRow(modelRowIndex); 
+             }
+    	}
     	
       }
 

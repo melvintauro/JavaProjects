@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 
 public class FileUtil {
-	static int[]  fileDBData = {25,15,12,12}; 
+	static int[]  fileDBData = {25,15,12,13,11}; 
 		
 	String varWorkTime =Integer.toString(fileDBData[0]);
 	String varBreakTime =Integer.toString(fileDBData[1]);
@@ -30,6 +30,7 @@ public class FileUtil {
     {  	
     	try {
 			Files.createDirectories(path1);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -38,24 +39,27 @@ public class FileUtil {
      myObj = new File(path.toString());
  if( 	myObj.exists())
     	{	fileRead();
+    	   
 	 
     	}
- else {fileWrite(varWorkTime, varBreakTime,varFont,Integer.toString(fileDBData[3]));}
+ else {fileWrite(fileDBData);
+	     }
     	   
     } // read the file 
     
 	    
-    public void fileWrite(String s1, String s2, String s3,String s4) {
+    public void fileWrite(int[] DBIntArray ) {
     	    
         List<String> lines = new ArrayList<>();
-        lines.add(" WorkTime="+s1);
-        lines.add("BreakTime="+s2);
-        lines.add("     Font="+s3);
-        lines.add("       lf="+s4);
-        //List.of(" WorkTime="+varWorkTime , "BreakTime="+varBreakTime,"     Font="+varFont);
-        //above line will work with java higher versions.
+        lines.add(" WorkTime="+Integer.toString(DBIntArray[0]));
+        lines.add("BreakTime="+Integer.toString(DBIntArray[1]));
+        lines.add("     Font="+Integer.toString(DBIntArray[2]));
+        lines.add("look&feel="+Integer.toString(DBIntArray[3]));
+        lines.add("Tolbarori="+Integer.toString(DBIntArray[4]));
+        
+
         try {
-       // 	File myObj = new File(path.toString());    
+        	File myObj = new File(path.toString());    
         	Files.write(path, lines, StandardCharsets.UTF_8);
             Scanner myReader = new Scanner(myObj);
             int i =0;
@@ -66,6 +70,7 @@ public class FileUtil {
                  i++;
             }
                  myReader.close();
+                
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,21 +79,22 @@ public class FileUtil {
     @SuppressWarnings("resource")
 	public  void fileRead() {
      try { 
-   // 	File myObj = new File(path.toString());
+    	File myObj = new File(path.toString());
         Scanner myReader = new Scanner(myObj);
         int i =0;
         while (myReader.hasNextLine()) {
             String data = myReader.nextLine();
             fileDBData[i] = Integer.parseInt(data.substring(10,12));
-            System.out.print(fileDBData[i]);
+            
         i++;
         }
         varWorkTime =Integer.toString(fileDBData[0]);  
         varBreakTime =Integer.toString(fileDBData[1]);
         varFont =Integer.toString(fileDBData[2]);
-       // System.out.println(fileDBData[0]+" fileRead " + fileDBData[1]  );
+      
         
-       // myReader.close();
+        myReader.close();
+     
      }catch (IOException e) {
             e.printStackTrace();
         }

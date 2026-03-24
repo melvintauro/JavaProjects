@@ -58,7 +58,7 @@ public class CheckboxTableModel extends DefaultTableModel implements TableModelL
 		
 	}
 
-	  public static void timeLabelCreator()
+	  public static int timeLabelCreator()
 	  {
 		  int hrs = 0; 
 			int min=0;
@@ -73,7 +73,7 @@ public class CheckboxTableModel extends DefaultTableModel implements TableModelL
 			TrayIconDemo.textTotalWorkHours=" Total Screen Time :- " + hrs +":"+ min;
 			TrayIconDemo.labelTotalWorkHours.setText(TrayIconDemo.textTotalWorkHours);
 				  
-		  
+		  return hrs;
 	  }
 
 

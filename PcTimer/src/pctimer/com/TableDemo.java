@@ -3,55 +3,43 @@ package pctimer.com;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.filechooser.FileSystemView;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import java.io.File;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.print.PrinterException;
-import java.io.FileWriter;
-import java.io.IOException;
 
-import javax.swing.event.TableModelEvent;
 
-public class TableDemo extends JPanel implements ActionListener {
+
+
+
+public class TableDemo extends JPanel implements ActionListener,ComponentListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	static URL imageURL = TrayIconDemo.class.getResource("images/record.png");
 	
 	//URL imageURL1 = TrayIconDemo.class.getResource("images/deleterow.gif");
@@ -63,10 +51,12 @@ public class TableDemo extends JPanel implements ActionListener {
     static final private String SAVE = "SAVE";
     static final private String PRINT = "PRINT";
     static final private String singleRow = "singleRow";
-
-	private static final TableModelEvent TableModelEvent = null;
+	
     static JTable table =null;
+    JToolBar toolBar =null;
+    FileUtil FUInTableDemo = new FileUtil(); // create File utility object.
     
+    Object[] ToolBarLocation ={BorderLayout.PAGE_START,BorderLayout.LINE_START,BorderLayout.LINE_END};
 
    
     
@@ -82,9 +72,9 @@ public class TableDemo extends JPanel implements ActionListener {
 		super (new BorderLayout());
 		
 		//Create the toolbar.
-		 JToolBar toolBar = new JToolBar("Still draggable");
-         
-         
+		 toolBar = new JToolBar("Still draggable");
+         toolBar.setOrientation(FileUtil.fileDBData[4]-10);
+         toolBar.addComponentListener(this);
          addButtons(toolBar);
 		 TrayIconDemo.labelTotalWorkHours = new JLabel();
 				
@@ -107,7 +97,7 @@ public class TableDemo extends JPanel implements ActionListener {
 		  
 		//Lay out the main panel.
 		    setPreferredSize(new Dimension(400, 300));
-	        add(toolBar, BorderLayout.PAGE_START);
+	        add(toolBar,ToolBarLocation[FileUtil.fileDBData[4]-10]);
 	        add(TrayIconDemo.labelTotalWorkHours,BorderLayout.PAGE_END );
 	        add(scrollPane, BorderLayout.CENTER);
 	       
@@ -198,7 +188,24 @@ return button;
     	  
       }
       
-   
+   //tool bar moved listener
+      public void componentMoved(ComponentEvent e) {         
+    	 
+      }
+      
+      public void componentHidden(ComponentEvent e) {
+        
+      }
+      public void componentShown(ComponentEvent e) {
+         
+      }
+      public void componentResized(ComponentEvent e) {
+    	 
+     FileUtil.fileDBData[4]= ((int)toolBar.getOrientation()+10);
+     FUInTableDemo.fileWrite(FileUtil.fileDBData); 	
+  
+    	 
+      }
 
 	  // button action write here
       public void actionPerformed(ActionEvent e){
@@ -226,10 +233,10 @@ return button;
     	
     	else if(SAVE.equals(buttonCmd))
     	{
-    		String csvFileName =  "/"+LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"))+
-					LocalTime.now().format(DateTimeFormatter.ofPattern("hhmm"))+".csv";
-    		convertToCSV(table,Paths.get(System.getProperty("user.dir")+"/report/"),csvFileName);
-      
+    		//String csvFileNameTimeLog =  "/"+LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"))+LocalTime.now().format(DateTimeFormatter.ofPattern("hhmm"))+".csv";
+    		String csvFileNameDayLog =  "/"+"DayLog"+".csv";
+    		//new CSVFileDataWrite().CSVWriteTimeLog(table,Paths.get(System.getProperty("user.dir")+"/report/"),csvFileNameTimeLog);
+    		new CSVFileDataWrite().CSVWriteDayLog(table,Paths.get(System.getProperty("user.dir")+"/report/"),csvFileNameDayLog);
       
     	}
     	
@@ -256,40 +263,7 @@ return button;
     	
       }
 
-   // save tool bar button 
-
-   public static boolean convertToCSV(JTable table,
-                                       Path path,String csvFileName) {
-   try {
-       TableModel model = table.getModel();
-       Files.createDirectories(path);
-       FileWriter csv = new FileWriter(new File(path.toString()+csvFileName));
-      
-
-       for (int i = 0; i < model.getColumnCount(); i++) {
-           csv.write(model.getColumnName(i) + ",");
-       }
-       csv.write("\n");
-
-       for (int i = 0; i < model.getRowCount(); i++) {
-           for (int j = 0; j < model.getColumnCount(); j++) {
-               csv.write(model.getValueAt(i, j).toString() + ",");
-           }
-           
-          
-           csv.write("\n");
-       }
-       csv.write("\n");
-       csv.write(TrayIconDemo.labelTotalWorkHours.getText());
-       csv.write("\n");
-       csv.close();
-       return true;
-   } catch (IOException e) {
-       e.printStackTrace();
-   }
-   return false;
-   }
-
+  
 // print tool bar button 
    public void printTable(JTable table) {  
    try {

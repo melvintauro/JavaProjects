@@ -3,11 +3,8 @@ package pctimer.com;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.table.DefaultTableModel;
-
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.awt.GridBagLayout;
@@ -54,7 +51,7 @@ class MyThread extends Thread
   		while(exit) {
                
   			      if(captureRecord==true)
-  	        {    System.out.println("capture entered");
+  	        {    
   	        	   addARecord("Work Time:-");//add a record using function 
   	        	 TrayIconDemo.trayIcon.setToolTip(TrayIconDemo.getMessageInfoStatus());
   	        	   captureRecord=false;
@@ -81,7 +78,6 @@ class MyThread extends Thread
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-       
         	 
         
         	
@@ -129,12 +125,12 @@ class MyThread extends Thread
   
   		} 
   //function end 
-  	public void updateWorkBreakTime()  // udapte the new time based on GUI settings change.
+  	public void updateWorkBreakTime()  // update the new time based on GUI settings change.
     {	  
-  	     workTime = fu.fileDBData[0];
-  		 breakTime = fu.fileDBData[1]; 
+  	     workTime = FileUtil.fileDBData[0];
+  		 breakTime = FileUtil.fileDBData[1]; 
   			
-     System.out.println(fu.fileDBData[0]+" updateWorkBreakTime " + fu.fileDBData[1] +" " +additionalTime );
+    
     } 
   	
   	public void beepPCSpeaker(int j )

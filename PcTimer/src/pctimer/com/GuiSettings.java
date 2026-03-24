@@ -10,11 +10,16 @@ import java.net.URL;
 
 import javax.swing.*;
 class GuiSettings extends JPanel implements ChangeListener, ActionListener {
- private static final ChangeEvent ChangeEvent = null;
+ /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
  static URL imageURL = TrayIconDemo.class.getResource("images/setting.gif");	
  FileUtil FU = new FileUtil(); // create File utility object.
  MyThread MT = new MyThread();
  static JComboBox<String> cb;
+
 
  String[] cbOptions ={"WindowsLookAndFeel","MetalLookAndFeel","GTKLookAndFeel","MotifLookAndFeel"};
    
@@ -51,7 +56,7 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
     	    
     	    // Create a JComboBox with the String array
             cb = new JComboBox<>(cbOptions);
-           
+           cb.setSelectedIndex(FileUtil.fileDBData[3]-10);
         
     	   s1 =createSliders(25,50,TrayIconDemo.t1.workTime,true,true,true,5,1);
     	   s2 =createSliders(10,20,TrayIconDemo.t1.breakTime,true,true,true,2,1);
@@ -129,10 +134,16 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
     
     public void actionPerformed(ActionEvent e){
           
-           	 FU.fileWrite(Integer.toString(s1.getValue()),Integer.toString(s2.getValue()),Integer.toString(s3.getValue()),Integer.toString(cb.getSelectedIndex()+10));
+           	 FileUtil.fileDBData[0]=s1.getValue(); 
+             FileUtil.fileDBData[1]=s2.getValue();
+             FileUtil.fileDBData[2]=s3.getValue();
+             FileUtil.fileDBData[3]=(cb.getSelectedIndex()+10);
+           			                
             	 TrayIconDemo.t1.workTime = s1.getValue();
              TrayIconDemo.t1.breakTime = s2.getValue();
-         
+             
+             FU.fileWrite(FileUtil.fileDBData);
+             System.out.println("inside action performed " + FileUtil.fileDBData[4]);
 										
 			
              

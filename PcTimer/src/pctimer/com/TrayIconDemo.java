@@ -15,16 +15,15 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 
 public class TrayIconDemo {
-static String threadMessage;
+static String threadMessage=null;
 static DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm");	
 public static MyThread t1 = new MyThread();
 public static FileUtil fu1=new FileUtil();
-public static TrayIcon trayIcon =
-new TrayIcon(createImage("images/pcworker.png", "tray icon"));
-
-public static String textTotalWorkHours ;
-public static JLabel labelTotalWorkHours ;
+public static TrayIcon trayIcon = new TrayIcon(createImage("images/pcworker.png", "tray icon"));
+public static String textTotalWorkHours =null;
+public static JLabel labelTotalWorkHours =null;
 public static Font allFont=null;
+
 
 
 static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel",
@@ -223,7 +222,7 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
                         public void run() {
                             //Turn off metal's use of bold fonts
             	        UIManager.put("swing.boldMetal", Boolean.FALSE);
-            	        ToolBarDemo.createAndShowGUI();
+            	    //    ToolBarDemo.createAndShowGUI();
                         }
                     });
                     

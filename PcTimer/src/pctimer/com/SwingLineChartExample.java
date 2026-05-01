@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class SwingLineChartExample extends JPanel {
@@ -23,9 +22,15 @@ public class SwingLineChartExample extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private List<Integer> dataPoints =new ArrayList<>();
+	private List<String> dataPointsLabel =new ArrayList<>();
 	List<String> firstColumnData = new ArrayList<>();
     List<String> secondColumnData = new ArrayList<>();
-	private Container collectionOfArraysList;
+    List<List<String>> nestedList = new ArrayList<>();
+    int x1 =0;
+    int y1 = 0;
+    int y2= 0;
+    int x2= 0;
+    
     
     public SwingLineChartExample() {
       
@@ -38,9 +43,15 @@ public class SwingLineChartExample extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
- 
-        Collection<List> dataCollection = CSVFileDataReadFunc(); 
-        dataPoints = (List<Integer>) dataCollection.stream();
+        nestedList = CSVFileDataReadFunc();
+        
+        for(int i = 1 ;i<nestedList.get(1).size();i++)
+        {
+          dataPoints.add(Integer.parseInt(nestedList.get(1).get(i)));
+          dataPointsLabel.add(nestedList.get(0).get(i));
+        }
+        
+      
         int padding = 40;
         int labelPadding = 25;
         int plotWidth = getWidth() - 2 * padding - labelPadding;
@@ -50,23 +61,31 @@ public class SwingLineChartExample extends JPanel {
         g2d.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, padding + labelPadding + plotWidth, getHeight() - padding - labelPadding);
         g2d.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, padding + labelPadding, padding);
         
+        for (int i = 0; i < dataPoints.size()-1 ; i++) {
+        g2d.drawString(dataPointsLabel.get(i), x1-20, getHeight()+10 - padding - labelPadding);
+        }
+        
         // Find max value to scale the data
         int maxData = dataPoints.stream().mapToInt(v -> v).max().orElse(100);
 
         // Plot the line
         g2d.setColor(Color.BLUE);
-        for (int i = 0; i < dataPoints.size() - 1; i++) {
-            int x1 = padding + labelPadding + i * plotWidth / (dataPoints.size() - 1);
-            int y1 = getHeight() - padding - labelPadding - dataPoints.get(i) * plotHeight / maxData;
-            int x2 = padding + labelPadding + (i + 1) * plotWidth / (dataPoints.size() - 1);
-            int y2 = getHeight() - padding - labelPadding - dataPoints.get(i + 1) * plotHeight / maxData;
+        for (int i = 0; i < dataPoints.size()-1 ; i++) {
+             x1 = padding + labelPadding + i * plotWidth / (dataPoints.size() - 1);
+             y1 = getHeight() - padding - labelPadding - dataPoints.get(i) * plotHeight / maxData;
+             x2 = padding + labelPadding + (i + 1) * plotWidth / (dataPoints.size() - 1);
+             y2 = getHeight() - padding - labelPadding - dataPoints.get(i + 1) * plotHeight / maxData;
             g2d.drawLine(x1, y1, x2, y2);
+         	
+            
         }
+        
+       System.out.println(dataPointsLabel);       
     }
 	
 	
 	
-	public Collection<List>  CSVFileDataReadFunc (){
+	public  List<List<String>> CSVFileDataReadFunc (){
 		Path path = Paths.get(System.getProperty("user.dir")+"/report/");
 		String csvFileNameDayLog =  "/"+"DayLog"+".csv";
 		String varToday = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"));
@@ -76,6 +95,7 @@ public class SwingLineChartExample extends JPanel {
         String delimiter = ",";
         List<String> firstColumnData = new ArrayList<>();
         List<String> secondColumnData = new ArrayList<>();
+        List<List<String>> nestedList = new ArrayList<>();
        
         try (BufferedReader br = new BufferedReader(new FileReader(path.toString()+csvFileNameDayLog))) {
             while ((line = br.readLine()) != null) {
@@ -97,7 +117,7 @@ public class SwingLineChartExample extends JPanel {
         for (String value1 : firstColumnData) {
         if (varToday.equals(value1))  
         {	
-        secondColumnData.set(firstColumnData.indexOf(value1), Float.toString(CheckboxTableModel.countCheckedCheckboxes(TableDemo.table,4)));
+        secondColumnData.set(firstColumnData.indexOf(value1), Float.toString((float) 250.23));
         CSVFileDataRead.CSVWriteDayLog(path,csvFileNameDayLog,firstColumnData,secondColumnData);
         System.out.println("inside if csvfiledataread");
         recordNotFound =false;
@@ -108,14 +128,17 @@ public class SwingLineChartExample extends JPanel {
         if (recordNotFound)
         {
         	   firstColumnData.add(varToday);
-        	   secondColumnData.add(Float.toString(CheckboxTableModel.countCheckedCheckboxes(TableDemo.table,4)));
+        	   secondColumnData.add(Float.toString((float) 250.23));
         	   CSVFileDataRead.CSVWriteDayLog(path,csvFileNameDayLog,firstColumnData,secondColumnData);
         	   System.out.println("inside else csvfiledataread--");
         	   recordNotFound=true;
         }
-        collectionOfArraysList.add((Component) firstColumnData);
-	    
-        return (Collection<List>) collectionOfArraysList;
+        
+	    nestedList.add(firstColumnData);
+	    nestedList.add(secondColumnData);
+	    firstColumnData =null;
+	    secondColumnData =null;
+        return nestedList;
        
 	
 	}

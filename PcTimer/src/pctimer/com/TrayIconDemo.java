@@ -19,10 +19,11 @@ static String threadMessage=null;
 static DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm");	
 public static MyThread t1 = new MyThread();
 public static FileUtil fu1=new FileUtil();
-public static TrayIcon trayIcon = new TrayIcon(createImage("images/pcworker.png", "tray icon"));
+public static TrayIcon trayIcon = new TrayIcon(createImage("images/pcworker.gif", "tray icon"));
 public static String textTotalWorkHours =null;
 public static JLabel labelTotalWorkHours =null;
 public static Font allFont=null;
+public static SystemTray tray=null;
 
 
 
@@ -82,7 +83,7 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
         popup.setFont(allFont);
         UIManager.put("OptionPane.font", new FontUIResource(new Font("Verdana", Font.PLAIN, FileUtil.fileDBData[2])));
                 
-        final SystemTray tray = SystemTray.getSystemTray();
+         tray = SystemTray.getSystemTray();
                          trayIcon.setImageAutoSize(true);
         // Create a popup menu components
         MenuItem resetItem = new MenuItem("Restart");
@@ -287,8 +288,9 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
         t1.workTimeStatus=true;
         	t1.additionalTime=LocalTime.now().plusMinutes(t1.workTime);
         	t1.currentLocalTime=LocalTime.now();
+        t1.lookAwayTime =LocalTime.now().plusMinutes(25);
         
-        	 System.out.println(t1.workTime+" setRestartThreadParameters " + t1.breakTime +" " +t1.additionalTime );
+      //  	 System.out.println(t1.workTime+" setRestartThreadParameters " + t1.breakTime +" " +t1.additionalTime );
   
 	t1.addARecord("Reset Time:-");
 	

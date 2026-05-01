@@ -51,7 +51,9 @@ public class TableDemo extends JPanel implements ActionListener,ComponentListene
     static final private String SAVE = "SAVE";
     static final private String PRINT = "PRINT";
     static final private String singleRow = "singleRow";
-	
+    static final private String EXIT = "exit";
+    
+    
     static JTable table =null;
     JToolBar toolBar =null;
     FileUtil FUInTableDemo = new FileUtil(); // create File utility object.
@@ -114,7 +116,7 @@ public class TableDemo extends JPanel implements ActionListener,ComponentListene
       protected void addButtons(JToolBar toolBar) {
           JButton button = null;
 
-          //first button
+        //first button NOT USED 
           button = makeNavigationButton("deleterow",CLEAR ,
                                         "Clear Record from table",
                                         "Clear");
@@ -149,6 +151,16 @@ public class TableDemo extends JPanel implements ActionListener,ComponentListene
                   "Single Row Delete",
              "singleRow");
           toolBar.add(button);
+    
+        //SEVENTH  button  
+          button = makeNavigationButton("exit",EXIT ,
+                                        "exit the App",
+                                        "Exit");
+          toolBar.add(button);
+      
+      
+      
+      
       }
       
       protected JButton makeNavigationButton(String imageName,
@@ -226,17 +238,18 @@ return button;
                      //Turn off metal's use of bold fonts
      	        UIManager.put("swing.boldMetal", Boolean.FALSE);
      	       GuiSettings.createAndShowGUI();
-                 }
-             });
+     }
+             
+    		 
+    		 
+    		 }  );  		 
+    		 	
     		
     	}
     	
     	else if(SAVE.equals(buttonCmd))
     	{
-    		//String csvFileNameTimeLog =  "/"+LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"))+LocalTime.now().format(DateTimeFormatter.ofPattern("hhmm"))+".csv";
-    		String csvFileNameDayLog =  "/"+"DayLog"+".csv";
-    		//new CSVFileDataWrite().CSVWriteTimeLog(table,Paths.get(System.getProperty("user.dir")+"/report/"),csvFileNameTimeLog);
-    		new CSVFileDataWrite().CSVWriteDayLog(table,Paths.get(System.getProperty("user.dir")+"/report/"),csvFileNameDayLog);
+    		saveRecord();
       
     	}
     	
@@ -260,9 +273,21 @@ return button;
      			MyThread.tableModel.removeRow(modelRowIndex); 
              }
     	}
-    	
-      }
+     	else if(EXIT.equals(buttonCmd))
+    	{
+     		 TrayIconDemo.tray.remove(TrayIconDemo.trayIcon);
+             System.exit(0);
+    	}
+      }//action performed closed
 
+      public void saveRecord()  // save record function 
+      {
+    	//String csvFileNameTimeLog =  "/"+LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"))+LocalTime.now().format(DateTimeFormatter.ofPattern("hhmm"))+".csv";
+  		String csvFileNameDayLog =  "/"+"DayLog"+".csv";
+  		//new CSVFileDataWrite().CSVWriteTimeLog(table,Paths.get(System.getProperty("user.dir")+"/report/"),csvFileNameTimeLog);
+  		new CSVFileDataWrite().CSVWriteDayLog(table,Paths.get(System.getProperty("user.dir")+"/report/"),csvFileNameDayLog);
+    	  
+      }   
   
 // print tool bar button 
    public void printTable(JTable table) {  

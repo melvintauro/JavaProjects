@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
 
 // Class inheriting Thread class
 class MyThread extends Thread 
@@ -19,14 +20,17 @@ class MyThread extends Thread
     int workTime = FileUtil.fileDBData[0];
 	int breakTime= FileUtil.fileDBData[1];  
 	int blinkTime = 10;
+	int lookAwayBlinkTime=1;
 	String dialogLabelMessage= "Break Time ";
 	boolean workTimeStatus = true;
 	boolean breakTimeStatus = false;
 	boolean captureRecord=true;
 	boolean historyVisible = false;
     LocalTime additionalTime=LocalTime.now().plusMinutes(workTime);
-	boolean exit=true;
+    LocalTime lookAwayTime =LocalTime.now().plusMinutes(25);
+    	boolean exit=true;
 	int value =0 ;
+	int lookAwayTimeValue=0;
 	JFrame dialog =new JFrame();
 	JLabel dialogLabel = new JLabel(dialogLabelMessage);
 	String threadMessage;
@@ -56,18 +60,30 @@ class MyThread extends Thread
   	        	 TrayIconDemo.trayIcon.setToolTip(TrayIconDemo.getMessageInfoStatus());
   	        	   captureRecord=false;
   	        }
-  	      value = LocalTime.now().compareTo(additionalTime);		  	           	        
+  	     
+  		value = LocalTime.now().compareTo(additionalTime);		  	           	        
   	        if(value>0 ) {
   	        if(workTimeStatus==true) // speaker will give a bell.
-  	        {	beepPCSpeaker(1);}else {beepPCSpeaker(2);try {
+  	        {	beepPCSpeaker(1);
+  	            new TableDemo().saveRecord();
+  	        }else {beepPCSpeaker(2);try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}}
   	        	
-            int i=blinkTime;
-        		for(int j=0;j<i;j++) {
+  	     lookAwayTimeValue = LocalTime.now().compareTo(additionalTime);	
+  	        if( lookAwayTimeValue>0)
+  	        {
+  	       for(int j=0;j<lookAwayBlinkTime;j++)
+  	        	{TrayIconDemo.trayIcon.displayMessage("Look away",
+                        "Look away from the screen", TrayIcon.MessageType.INFO);}
+  	        	
+  	         }
+  	        
+           // int i=blinkTime;
+        		for(int j=0;j<blinkTime;j++) {
         
         	try {
         		    dialog.setVisible(true); 
@@ -92,6 +108,7 @@ class MyThread extends Thread
                if (workTimeStatus==true) {
                	  additionalTime = LocalTime.now().plusMinutes(workTime);
                	  currentLocalTime=LocalTime.now();
+              	lookAwayTime =LocalTime.now().plusMinutes(25);
                   dialogLabelMessage="Break Time - Walk";
            	      System.out.print(dialogLabelMessage + "\n");
            	      captureRecord=true;

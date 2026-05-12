@@ -26,8 +26,10 @@ class MyThread extends Thread
 	boolean breakTimeStatus = false;
 	boolean captureRecord=true;
 	boolean historyVisible = false;
+	boolean lookAwayTimeBool =true;
+	int timeFromWHO = 20;
     LocalTime additionalTime=LocalTime.now().plusMinutes(workTime);
-    LocalTime lookAwayTime =LocalTime.now().plusMinutes(25);
+    LocalTime lookAwayTime =LocalTime.now().plusMinutes(timeFromWHO);
     	boolean exit=true;
 	int value =0 ;
 	int lookAwayTimeValue=0;
@@ -62,8 +64,9 @@ class MyThread extends Thread
   	        }
   	     
   		value = LocalTime.now().compareTo(additionalTime);		  	           	        
-  	        if(value>0 ) {
-  	        if(workTimeStatus==true) // speaker will give a bell.
+  	        if(value>0 ) { // if block starts here 
+  	       
+  	        	if(workTimeStatus==true) // speaker will give a bell.
   	        {	beepPCSpeaker(1);
   	            new TableDemo().saveRecord();
   	        }else {beepPCSpeaker(2);try {
@@ -71,19 +74,13 @@ class MyThread extends Thread
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}}
+			} //catch ends here 
+   	        }  // if block ends here 
   	        	
-  	     lookAwayTimeValue = LocalTime.now().compareTo(additionalTime);	
-  	        if( lookAwayTimeValue>0)
-  	        {
-  	       for(int j=0;j<lookAwayBlinkTime;j++)
-  	        	{TrayIconDemo.trayIcon.displayMessage("Look away",
-                        "Look away from the screen", TrayIcon.MessageType.INFO);}
-  	        	
-  	         }
+  	
   	        
            // int i=blinkTime;
-        		for(int j=0;j<blinkTime;j++) {
+        		for(int j=0;j<blinkTime;j++) {  //for starts here
         
         	try {
         		    dialog.setVisible(true); 
@@ -95,9 +92,7 @@ class MyThread extends Thread
 				e.printStackTrace();
 			}
         	 
-        
-        	
-        		                   } //for block 
+          } //for block  ends here 
         		
        // 	exit =false;
                // convert status of work/breaktime set next additionaltime                 
@@ -105,12 +100,12 @@ class MyThread extends Thread
              breakTimeStatus=!breakTimeStatus; 
              
          //create Next time line.    
-               if (workTimeStatus==true) {
+               if (workTimeStatus==true) {   // if start here
                	  additionalTime = LocalTime.now().plusMinutes(workTime);
                	  currentLocalTime=LocalTime.now();
-              	lookAwayTime =LocalTime.now().plusMinutes(25);
-                  dialogLabelMessage="Break Time - Walk";
-           	      System.out.print(dialogLabelMessage + "\n");
+              	  dialogLabelMessage="Break Time - Walk";
+                 	lookAwayTime = currentLocalTime.plusMinutes(timeFromWHO);
+                 	lookAwayTimeBool=true;
            	      captureRecord=true;
            	      blinkTime=10;
                }
@@ -118,16 +113,27 @@ class MyThread extends Thread
                additionalTime = LocalTime.now().plusMinutes(breakTime);
                currentLocalTime=LocalTime.now();
                dialogLabelMessage="work Time";
-               System.out.print(dialogLabelMessage + "\n" );
-               captureRecord=true;
+                              captureRecord=true;
                blinkTime=blinkTime/2;
                } //if block close
-  		                        }// if block
+  		                        }// if block ends here
   		 dialogLabel.setText(dialogLabelMessage);
-  		
+		 
+  		 // code for 25 minutes look away time is here
+  	     lookAwayTimeValue = LocalTime.now().compareTo(lookAwayTime);	
+	        if( lookAwayTimeValue>0 && lookAwayTimeBool)
+	        {
+	       for(int j=0;j<lookAwayBlinkTime;j++)
+	        	{TrayIconDemo.trayIcon.displayMessage("Look away",
+                     "Look away from the screen", TrayIcon.MessageType.INFO);}
+	           lookAwayTimeBool=false;
+	           System.out.println("happened"+LocalTime.now());
+	         
+	         } //lookAwayif block ends. */
+  		 
   		  }  //while block 
         
-  	System.out.println("exited run");
+  
   	
     
   	

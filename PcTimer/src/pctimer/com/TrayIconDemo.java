@@ -17,14 +17,14 @@ import javax.swing.plaf.FontUIResource;
 public class TrayIconDemo {
 static String threadMessage=null;
 static DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm");	
-public static MyThread t1 = new MyThread();
+//public  MyThread t1 = new MyThread();
 public static FileUtil fu1=new FileUtil();
 public static TrayIcon trayIcon = new TrayIcon(createImage("images/pcworker.gif", "tray icon"));
 public static String textTotalWorkHours =null;
 public static JLabel labelTotalWorkHours =null;
 public static Font allFont=null;
 public static SystemTray tray=null;
-
+ 
 
 
 static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel",
@@ -37,7 +37,7 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
     	   	// Creating thread
       
        	// Starting thread to count workbreaktiem
-        t1.start(); 
+   	new MyThread().start(); 
         
         //additional time display on diaglog box when double clicking
       
@@ -136,7 +136,7 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
                      public void run() {
                          //Turn off metal's use of bold fonts
          	       // UIManager.put("swing.boldMetal", Boolean.FALSE);
-         	        TableDemo.createAndShowGUI();
+         	       new TableDemo().createAndShowGUI();
                      }
                  });
           
@@ -169,7 +169,7 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
                     public void run() {
                         //Turn off metal's use of bold fonts
         	        UIManager.put("swing.boldMetal", Boolean.FALSE);
-        	        TableDemo.createAndShowGUI();
+        	        new TableDemo().createAndShowGUI();
                     }
                 });
                
@@ -270,9 +270,9 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
     protected static String getMessageInfoStatus()
     {
     	   String messageInfoStatus = new String(
-    			      "\n   WorkTime:- " + Boolean.toString(t1.workTimeStatus)+
-    			      "\n  StartTime:- " + t1.currentLocalTime.format(myFormatObj)+
-                   "\n NextAlarm:- " + t1.additionalTime.format(myFormatObj) +
+    			      "\n   WorkTime:- " + Boolean.toString(new MyThread().workTimeStatus)+
+    			      "\n  StartTime:- " + new MyThread().currentLocalTime.format(myFormatObj)+
+                   "\n NextAlarm:- " + new MyThread().additionalTime.format(myFormatObj) +
                    "\n "+ TrayIconDemo.textTotalWorkHours
                      
     			   
@@ -284,15 +284,17 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
   //restart the parameters in thread.
     protected static void setRestartThreadParameters()
     {   
-      	t1.breakTimeStatus=false;
-        t1.workTimeStatus=true;
-        	t1.additionalTime=LocalTime.now().plusMinutes(t1.workTime);
-        	t1.currentLocalTime=LocalTime.now();
-        t1.lookAwayTime =LocalTime.now().plusMinutes(25);
+    	new MyThread().breakTimeStatus=false;
+    	new MyThread().workTimeStatus=true;
+    	new MyThread().additionalTime=LocalTime.now().plusMinutes(new MyThread().workTime);
+    	new MyThread().currentLocalTime=LocalTime.now();
+    	new MyThread().dialogLabelMessage="Break Time - Walk";
+    	new MyThread().lookAwayTimeBool=true;
+    	new MyThread().lookAwayTime = new MyThread().currentLocalTime.plusMinutes(new MyThread().timeFromWHO);
         
-      //  	 System.out.println(t1.workTime+" setRestartThreadParameters " + t1.breakTime +" " +t1.additionalTime );
+      	 
   
-	t1.addARecord("Reset Time:-");
+    	new MyThread().addARecord("Reset Time:-");
 	
     }
     

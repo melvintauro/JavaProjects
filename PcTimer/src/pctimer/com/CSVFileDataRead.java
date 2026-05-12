@@ -53,7 +53,7 @@ public class CSVFileDataRead{
         {	
         secondColumnData.set(firstColumnData.indexOf(value1), Float.toString(CheckboxTableModel.countCheckedCheckboxes(TableDemo.table,4)));
         CSVFileDataRead.CSVWriteDayLog(path,csvFileNameDayLog,firstColumnData,secondColumnData);
-        System.out.println("inside if csvfiledataread");
+       
         recordNotFound =false;
        }
         
@@ -64,7 +64,7 @@ public class CSVFileDataRead{
         	   firstColumnData.add(varToday);
         	   secondColumnData.add(Float.toString(CheckboxTableModel.countCheckedCheckboxes(TableDemo.table,4)));
         	   CSVFileDataRead.CSVWriteDayLog(path,csvFileNameDayLog,firstColumnData,secondColumnData);
-        	   System.out.println("inside else csvfiledataread--");
+        	   
         	   recordNotFound=true;
         }
      

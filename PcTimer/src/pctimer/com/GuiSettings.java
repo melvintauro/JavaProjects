@@ -14,8 +14,7 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
- static URL imageURL = TrayIconDemo.class.getResource("images/setting.gif");	
+  URL imageURL = TrayIconDemo.class.getResource("images/setting.gif");	
  FileUtil FU = new FileUtil(); // create File utility object.
  MyThread MT = new MyThread();
  static JComboBox<String> cb;
@@ -58,8 +57,8 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
             cb = new JComboBox<>(cbOptions);
            cb.setSelectedIndex(FileUtil.fileDBData[3]-10);
         
-    	   s1 =createSliders(25,50,TrayIconDemo.t1.workTime,true,true,true,5,1);
-    	   s2 =createSliders(10,20,TrayIconDemo.t1.breakTime,true,true,true,2,1);
+    	   s1 =createSliders(25,50,new MyThread().workTime,true,true,true,5,1);
+    	   s2 =createSliders(10,20,new MyThread().breakTime,true,true,true,2,1);
     	   s3 =createSliders(10,20,FileUtil.fileDBData[2],true,true,true,2,1);
     	   
     		// create label
@@ -139,18 +138,18 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
              FileUtil.fileDBData[2]=s3.getValue();
              FileUtil.fileDBData[3]=(cb.getSelectedIndex()+10);
            			                
-            	 TrayIconDemo.t1.workTime = s1.getValue();
-             TrayIconDemo.t1.breakTime = s2.getValue();
+             new MyThread().workTime = s1.getValue();
+             new MyThread().breakTime = s2.getValue();
              
              FU.fileWrite(FileUtil.fileDBData);
-             System.out.println("inside action performed " + FileUtil.fileDBData[4]);
+           
 										
 			
              
     }
     
 
-    static void createAndShowGUI() {
+  public void createAndShowGUI() {
   	  
   	  
 	     //Create and set up the window.

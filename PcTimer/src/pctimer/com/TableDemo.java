@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.print.PrinterException;
+import graph.com.BarLineChart;
 
 
 
@@ -38,20 +37,21 @@ public class TableDemo extends JPanel implements ActionListener,ComponentListene
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	
 
-	static URL imageURL = TrayIconDemo.class.getResource("images/record.png");
+	URL imageURL = TrayIconDemo.class.getResource("images/record.png");
 	
 	//URL imageURL1 = TrayIconDemo.class.getResource("images/deleterow.gif");
 	//URL imageURL2 = TrayIconDemo.class.getResource("images/reset.png");
 	
-	static final private String CLEAR = "CLEAR";
-    static final private String RESET = "RESET";
-    static final private String SETTING = "SETTING";
-    static final private String SAVE = "SAVE";
-    static final private String PRINT = "PRINT";
-    static final private String singleRow = "singleRow";
-    static final private String EXIT = "exit";
+	 final private String clear = "CLEAR";
+     final private String reset = "RESET";
+    final private String setting = "SETTING";
+    final private String save = "SAVE";
+    final private String print = "PRINT";
+     final private String selectedRow = "SELECTEDROW";
+     final private String exit = "EXIT";
+     final private String chart = "CHART";
     
     
     static JTable table =null;
@@ -117,43 +117,43 @@ public class TableDemo extends JPanel implements ActionListener,ComponentListene
           JButton button = null;
 
         //first button NOT USED 
-          button = makeNavigationButton("deleterow",CLEAR ,
-                                        "Clear Record from table",
-                                        "Clear");
+          button = makeNavigationButton("barchart",chart ,
+                                        "View a BarChart",
+                                        "BarChart");
           toolBar.add(button);
 
           //second button
-          button = makeNavigationButton("reset",RESET,
-        		                             "Reset Record from table" + TrayIconDemo.textTotalWorkHours,
+          button = makeNavigationButton("reset",reset,
+        		                             "Reset the On-going Timer" + TrayIconDemo.textTotalWorkHours,
                                         "Reset");
           toolBar.add(button);
 
         //THIRD  button
-          button = makeNavigationButton("setting",SETTING,
-        		                             "Setting for Application",
+          button = makeNavigationButton("setting",setting,
+        		                             "Setting Change",
                                         "Setting");
           toolBar.add(button);
       
         //FOURTH button
-          button = makeNavigationButton("save",SAVE,
+          button = makeNavigationButton("save",save,
         		                             "Save the table",
                                         "save");
           toolBar.add(button);
       
           //FIFTH BUTTON
-          button = makeNavigationButton("print",PRINT,
+          button = makeNavigationButton("print",print,
                   "print the table",
              "print");
           toolBar.add(button);
           
           //sixth BUTTON
-          button = makeNavigationButton("singlerow",singleRow,
-                  "Single Row Delete",
-             "singleRow");
+          button = makeNavigationButton("deleterow",selectedRow,
+                  "Selected Row Delete",
+             "selectrow");
           toolBar.add(button);
     
         //SEVENTH  button  
-          button = makeNavigationButton("exit",EXIT ,
+          button = makeNavigationButton("exit",exit ,
                                         "exit the App",
                                         "Exit");
           toolBar.add(button);
@@ -222,22 +222,24 @@ return button;
 	  // button action write here
       public void actionPerformed(ActionEvent e){
     	  String buttonCmd = e.getActionCommand();
-    	if(CLEAR.equals(buttonCmd))  
+    	if(chart.equals(buttonCmd))  
       	{
-        while( MyThread.tableModel.getRowCount()>1)
-        	 MyThread.tableModel.removeRow(0);
+    		
+    		new BarLineChart().createAndShowGUI();
+       /* while( MyThread.tableModel.getRowCount()>1)
+        	 MyThread.tableModel.removeRow(0);*/
       	}
-    	else if(RESET.equals(buttonCmd))
+    	else if(reset.equals(buttonCmd))
     	{
     		
     		TrayIconDemo.setRestartThreadParameters();
-    	} else if(SETTING.equals(buttonCmd))
+    	} else if(setting.equals(buttonCmd))
     	{
     		 SwingUtilities.invokeLater(new Runnable() {
                  public void run() {
                      //Turn off metal's use of bold fonts
      	        UIManager.put("swing.boldMetal", Boolean.FALSE);
-     	       GuiSettings.createAndShowGUI();
+     	       new GuiSettings().createAndShowGUI();
      }
              
     		 
@@ -247,20 +249,20 @@ return button;
     		
     	}
     	
-    	else if(SAVE.equals(buttonCmd))
+    	else if(save.equals(buttonCmd))
     	{
     		saveRecord();
       
     	}
     	
     	
-    	else if(PRINT.equals(buttonCmd))
+    	else if(print.equals(buttonCmd))
     	{
     		
     		printTable(table);
     	}
     	
-     	else if(singleRow.equals(buttonCmd))
+     	else if(selectedRow.equals(buttonCmd))
     	{
      		int[] selectedRows = table.getSelectedRows();
      		
@@ -273,7 +275,7 @@ return button;
      			MyThread.tableModel.removeRow(modelRowIndex); 
              }
     	}
-     	else if(EXIT.equals(buttonCmd))
+     	else if(exit.equals(buttonCmd))
     	{
      		 TrayIconDemo.tray.remove(TrayIconDemo.trayIcon);
              System.exit(0);
@@ -300,7 +302,7 @@ return button;
 	}  
    }
 
-      static void createAndShowGUI() {
+      public void createAndShowGUI() {
     	  
     	  
     	     //Create and set up the window.

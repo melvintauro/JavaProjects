@@ -16,6 +16,7 @@ import java.util.List;
 
 public class CSVFileDataRead{
 	Boolean recordNotFound = true;
+	 @SuppressWarnings("rawtypes")
 	 Collection <List> collectionOfArraysList = new ArrayList<>();
 	 
 	public CSVFileDataRead() {

@@ -41,18 +41,19 @@ class MyThread extends Thread
     static CheckboxTableModel tableModel = null;
 		
 	// Overriding the run method
-  	@Override
+  	@SuppressWarnings("static-access")
+	@Override
     public void run(){
       
         
-  		dialog.setLayout(new GridBagLayout());
+     	dialog.setLayout(new GridBagLayout());
   		dialog.add(dialogLabel);
   		dialog.setPreferredSize(new java.awt.Dimension(200,200));
   		dialog.setLocation(600,250);  //500,200
   		dialog.setIconImage(new ImageIcon(imageURL).getImage());
   		dialog.setTitle ("Action Status");
   		  		dialog.pack();
-  		  		createTableModel();
+  		  		createTableModel(); 
   		
   		while(exit) {
                
@@ -68,7 +69,7 @@ class MyThread extends Thread
   	       
   	        	if(workTimeStatus==true) // speaker will give a bell.
   	        {	beepPCSpeaker(1);
-  	            new TableDemo().saveRecord();
+  	           
   	        }else {beepPCSpeaker(2);try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -103,7 +104,7 @@ class MyThread extends Thread
                if (workTimeStatus==true) {   // if start here
                	  additionalTime = LocalTime.now().plusMinutes(workTime);
                	  currentLocalTime=LocalTime.now();
-              	  dialogLabelMessage="Break Time - Walk";
+              	  dialogLabelMessage="work Time";
                  	lookAwayTime = currentLocalTime.plusMinutes(timeFromWHO);
                  	lookAwayTimeBool=true;
            	      captureRecord=true;
@@ -112,7 +113,7 @@ class MyThread extends Thread
                if(breakTimeStatus==true) {
                additionalTime = LocalTime.now().plusMinutes(breakTime);
                currentLocalTime=LocalTime.now();
-               dialogLabelMessage="work Time";
+               dialogLabelMessage="Break Time - Walk"; //"work Time";
                               captureRecord=true;
                blinkTime=blinkTime/2;
                } //if block close
@@ -127,11 +128,16 @@ class MyThread extends Thread
 	        	{TrayIconDemo.trayIcon.displayMessage("Look away",
                      "Look away from the screen", TrayIcon.MessageType.INFO);}
 	           lookAwayTimeBool=false;
-	           System.out.println("happened"+LocalTime.now());
-	         
+	            new TableDemo().saveRecord();
 	         } //lookAwayif block ends. */
   		 
-  		  }  //while block 
+  		 try {
+			sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+  		}  //while block 
         
   
   	
@@ -176,6 +182,19 @@ class MyThread extends Thread
          
   	 }
 
-
+  	//restart the parameters in thread.
+   public void setRestartThreadParameters()
+     {   
+     	breakTimeStatus=false;
+     	workTimeStatus=true;
+     	additionalTime=LocalTime.now().plusMinutes(workTime);
+     	currentLocalTime=LocalTime.now();
+     	dialogLabelMessage="Break Time - Walk";
+     	lookAwayTimeBool=true;
+     	lookAwayTime = currentLocalTime.plusMinutes(timeFromWHO);
+     
+     	addARecord("Reset Time:-");
+ 	
+     }
 
 }

@@ -8,7 +8,6 @@ package pctimer.com;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.*;
@@ -17,7 +16,7 @@ import javax.swing.plaf.FontUIResource;
 public class TrayIconDemo {
 static String threadMessage=null;
 static DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm");	
-//public  MyThread t1 = new MyThread();
+public static MyThread timerThread = new MyThread();
 public static FileUtil fu1=new FileUtil();
 public static TrayIcon trayIcon = new TrayIcon(createImage("images/pcworker.gif", "tray icon"));
 public static String textTotalWorkHours =null;
@@ -37,7 +36,7 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
     	   	// Creating thread
       
        	// Starting thread to count workbreaktiem
-   	new MyThread().start(); 
+    	timerThread.start(); 
         
         //additional time display on diaglog box when double clicking
       
@@ -156,7 +155,7 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
         resetItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	//restart the parameters in thread.
-              	setRestartThreadParameters()   ; 
+              	timerThread.setRestartThreadParameters()   ; 
              	trayIcon.setToolTip(getMessageInfoStatus()); //reset the tool tip message
              //	trayIcon.displayMessage(getMessageInfoStatus(),""                        , TrayIcon.MessageType.NONE);
                
@@ -236,7 +235,7 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
                     
                 } else if ("Restart".equals(item.getLabel())) {
                     
-                	setRestartThreadParameters()   ; 
+                	timerThread.setRestartThreadParameters()   ; 
               
                 }
             }
@@ -281,22 +280,7 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
     return messageInfoStatus;
     }
 
-  //restart the parameters in thread.
-    protected static void setRestartThreadParameters()
-    {   
-    	new MyThread().breakTimeStatus=false;
-    	new MyThread().workTimeStatus=true;
-    	new MyThread().additionalTime=LocalTime.now().plusMinutes(new MyThread().workTime);
-    	new MyThread().currentLocalTime=LocalTime.now();
-    	new MyThread().dialogLabelMessage="Break Time - Walk";
-    	new MyThread().lookAwayTimeBool=true;
-    	new MyThread().lookAwayTime = new MyThread().currentLocalTime.plusMinutes(new MyThread().timeFromWHO);
-        
-      	 
   
-    	new MyThread().addARecord("Reset Time:-");
-	
-    }
     
 
 }

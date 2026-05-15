@@ -33,6 +33,7 @@ import graph.com.BarLineChart;
 
 
 
+@SuppressWarnings("serial")
 public class TableDemo extends JPanel implements ActionListener,ComponentListener {
 	/**
 	 * 
@@ -44,7 +45,8 @@ public class TableDemo extends JPanel implements ActionListener,ComponentListene
 	//URL imageURL1 = TrayIconDemo.class.getResource("images/deleterow.gif");
 	//URL imageURL2 = TrayIconDemo.class.getResource("images/reset.png");
 	
-	 final private String clear = "CLEAR";
+	 @SuppressWarnings("unused")
+	final private String clear = "CLEAR";
      final private String reset = "RESET";
     final private String setting = "SETTING";
     final private String save = "SAVE";
@@ -232,7 +234,7 @@ return button;
     	else if(reset.equals(buttonCmd))
     	{
     		
-    		TrayIconDemo.setRestartThreadParameters();
+    		TrayIconDemo.timerThread.setRestartThreadParameters();
     	} else if(setting.equals(buttonCmd))
     	{
     		 SwingUtilities.invokeLater(new Runnable() {

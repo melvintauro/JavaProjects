@@ -16,7 +16,7 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
 	private static final long serialVersionUID = 1L;
   URL imageURL = TrayIconDemo.class.getResource("images/setting.gif");	
  FileUtil FU = new FileUtil(); // create File utility object.
- MyThread MT = new MyThread();
+
  static JComboBox<String> cb;
 
 
@@ -138,8 +138,8 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
              FileUtil.fileDBData[2]=s3.getValue();
              FileUtil.fileDBData[3]=(cb.getSelectedIndex()+10);
            			                
-             new MyThread().workTime = s1.getValue();
-             new MyThread().breakTime = s2.getValue();
+           TrayIconDemo.timerThread.workTime = s1.getValue();
+           TrayIconDemo.timerThread.breakTime = s2.getValue();
              
              FU.fileWrite(FileUtil.fileDBData);
            

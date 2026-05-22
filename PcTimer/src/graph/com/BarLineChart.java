@@ -2,7 +2,10 @@ package graph.com;
  
 
 import javax.swing.*;
+
+
 import java.awt.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -19,42 +22,42 @@ import java.util.List;
 import pctimer.com.*;
 
 @SuppressWarnings("serial")
-public class BarLineChart extends JPanel {
+public class BarLineChart extends JPanel  {
     /**
 	 * 
 	 */
 	
-	private List<Integer> dataPoints =new ArrayList<>();
-	private List<String> dataPointsLabel =new ArrayList<>();
-	private List<Float> dataPointsHRSLabel =new ArrayList<>();
-//	List<String> dayColumnData = new ArrayList<>();  // first list for day 
-  //  List<String> minutesColumnData = new ArrayList<>();  // second list for minutes
-    List<List<String>> nestedList = new ArrayList<>();  // nested list 
+	public List<Float> dataPoints =new ArrayList<>();
+	public List<Integer> dataPointsInt =new ArrayList<>();
+	public  List<String> dataPointsLabel =new ArrayList<>();
+	public  List<String> dataPointsHRSLabel =new ArrayList<>();
+    public List<List<String>> nestedList = new ArrayList<>();  // nested list 
     int x1 =0;
-    int y1 = 0;
+    float y1 = 0;
     int y2= 0;
     int x2= 0;
+   int varNestedList;
+    
     URL imageURL = TrayIconDemo.class.getResource("images/barchart.gif");	
+  
     
     public BarLineChart() {
-      
-        setPreferredSize(new Dimension(500, 300));
+        
+         setPreferredSize(new Dimension(500, 300));
+         nestedList = CSVFileDataReadFunc();
+         varNestedList = nestedList.get(1).size();
+         changeBarParameters();
+        
+        
     }
-
+ 
+   
   
 	@Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+       
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        nestedList = CSVFileDataReadFunc();
-        
-        for(int i =nestedList.get(1).size()-9  ;i< nestedList.get(1).size();i++)
-        {
-          dataPoints.add((int) Float.parseFloat(nestedList.get(1).get(i))/60);
-          dataPointsLabel.add(nestedList.get(0).get(i).substring(0, 5));
-          dataPointsHRSLabel.add(Float.parseFloat(nestedList.get(1).get(i))/60);
-        }
         
       
         int padding = 40;
@@ -70,11 +73,11 @@ public class BarLineChart extends JPanel {
         
                 
         // Find max value to scale the data
-        int maxData = dataPoints.stream().mapToInt(v -> v).max().orElse(100);
+        int maxData = dataPointsInt.stream().mapToInt(v -> v).max().orElse(100);
 
         // Plot the line
         g2d.setColor(Color.BLACK);
-        for (int i = 0; i < dataPoints.size()-1 ; i++) {
+        for (int i = 1; i < dataPoints.size() ; i++) {
       /*   //  old code here 
         	    x1 = padding + labelPadding + i * plotWidth / (dataPoints.size() - 1);
             y1 = getHeight() - padding - labelPadding - dataPoints.get(i) * plotHeight / maxData;
@@ -82,22 +85,43 @@ public class BarLineChart extends JPanel {
             y2 = getHeight() - padding - labelPadding - dataPoints.get(i + 1) * plotHeight / maxData;
             g2d.drawLine(x1, y1, x2, y2);
             
-     */     	x1 = padding + labelPadding + (i + 1) * plotWidth / (dataPoints.size());
-            y1 = getHeight() - padding - labelPadding- dataPoints.get(i + 1) * plotHeight / maxData; 
-        	
-        	    x2= padding + labelPadding + (i + 1) * plotWidth / (dataPoints.size() ) ;
-            y2= getHeight() - padding - labelPadding -5 ;
-            g2d.setStroke(new BasicStroke(10.0f));
-            g2d.drawLine(x1, y1, x2, y2);
+     */     	x1 = padding + labelPadding + i* plotWidth / (dataPoints.size());
+            y1 = getHeight() - padding - labelPadding - dataPoints.get(i) * plotHeight / maxData;
+             	
+        	    x2= padding + labelPadding + i* plotWidth / (dataPoints.size() ) ;
+            y2= getHeight() - padding - labelPadding -7 ; // constant added to match y2 with the line
+            g2d.setStroke(new BasicStroke(15.0f));
+            g2d.drawLine(x1, (int) y1, x2, y2);// cast added to convert decimal to integer
             
-            g2d.drawString(Float.toString(dataPointsHRSLabel.get(i)).substring(0, 4), x1, y1-10);
-            g2d.drawString(dataPointsLabel.get(i), x2, y2+20);
-        }  
-        
+            g2d.drawString(dataPointsHRSLabel.get(i), x1, y1-10); // constant added to make label visible
+            g2d.drawString(dataPointsLabel.get(i), x2, y2+20);// constant added to make label visible
            
-    }
+           }  
+        
+        
+        g2d.dispose();// Dispose of the copy
+   	
+	 }
+	// Function to change the bar chart parameters
+	public void changeBarParameters() {
+		 
+		   dataPointsInt.clear();
+	        dataPoints.clear();
+	        dataPointsLabel.clear();
+	        dataPointsHRSLabel.clear();
+		 
+		for(int i =varNestedList-10  ;i<varNestedList-1;i++){
+	    
+      	dataPointsInt.add((int) (Float.parseFloat(nestedList.get(1).get(i))/60));
+       dataPoints.add(Float.parseFloat(nestedList.get(1).get(i))/60);
+       dataPointsLabel.add(nestedList.get(0).get(i).substring(0, 5));
+       dataPointsHRSLabel.add(String.format("%.2f",Float.parseFloat(nestedList.get(1).get(i))/60));
+    
+       
+		}
 	
-	
+	}
+	// read file funtion start below.
 	
 	public  List<List<String>> CSVFileDataReadFunc (){
 		Path path = Paths.get(System.getProperty("user.dir")+"/report");
@@ -133,7 +157,7 @@ public class BarLineChart extends JPanel {
         {	
         secondColumnData.set(firstColumnData.indexOf(value1), Float.toString((float) 250.23));
         CSVFileDataRead.CSVWriteDayLog(path,csvFileNameDayLog,firstColumnData,secondColumnData);
-        System.out.println("inside if csvfiledataread");
+       
         recordNotFound =false;
        }
         
@@ -144,7 +168,7 @@ public class BarLineChart extends JPanel {
         	   firstColumnData.add(varToday);
         	   secondColumnData.add(Float.toString((float) 250.23));
         	   CSVFileDataRead.CSVWriteDayLog(path,csvFileNameDayLog,firstColumnData,secondColumnData);
-        	   System.out.println("inside else csvfiledataread--");
+        	   
         	   recordNotFound=true;
         }
         
@@ -183,11 +207,10 @@ public class BarLineChart extends JPanel {
 	// Call function from other objects 
 	   public void createAndShowGUI() {
 		  	  
-		  	  
 		     //Create and set up the window.
 	    JFrame  frame = new JFrame("BarChart");
 	     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	      
+	
 	        
 	     //Add content to the window.
 	     frame.add(new BarLineChart());
@@ -204,7 +227,7 @@ public class BarLineChart extends JPanel {
 	     //Display the window.
 	     frame.pack();
 	     frame.setVisible(true);
-	   
+	    
 	 
 	 }
 
@@ -219,5 +242,12 @@ public class BarLineChart extends JPanel {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
+       
+        
+        
+        
+        }
+		
+
+   
 }

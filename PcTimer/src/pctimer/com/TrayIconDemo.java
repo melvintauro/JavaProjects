@@ -1,24 +1,28 @@
-
-
-package pctimer.com;  
 /*
  * TrayIconDemo.java
  */
+package pctimer.com;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
-
+import com.formdev.flatlaf.*;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.*;
+import com.formdev.flatlaf.intellijthemes.*;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
+
+import com.formdev.flatlaf.FlatDarculaLaf;
 
 public class TrayIconDemo {
 static String threadMessage=null;
 static DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm");	
 public static MyThread timerThread = new MyThread();
 public static FileUtil fu1=new FileUtil();
-public static TrayIcon trayIcon = new TrayIcon(createImage("images/pcworker.gif", "tray icon"));
+
+public static TrayIcon trayIcon =new TrayIcon(createImage("images/pcworker.gif"), "tray icon"); 
+
 public static String textTotalWorkHours =null;
 public static JLabel labelTotalWorkHours =null;
 public static Font allFont=null;
@@ -26,39 +30,37 @@ public static SystemTray tray=null;
  
 
 
-static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel",
-		           "javax.swing.plaf.metal.MetalLookAndFeel",
-		 "com.sun.java.swing.plaf.gtk.GTKLookAndFeel",
-		 "com.sun.java.swing.plaf.motif.MotifLookAndFeel"    };
+static Object[] lfOptions = {new FlatLightLaf(),
+		           new FlatMTLightOwlIJTheme(),
+		 new FlatMTMonokaiProIJTheme(),
+		 new FlatMTMaterialOceanicIJTheme()    };
 
-    public static void main(String[] args) {
+
+
+    public static void main(String[] args)  {
         /* Use an appropriate Look and Feel */
     	   	// Creating thread
-      
+    	allFont = new Font("Verdana", Font.PLAIN, FileUtil.fileDBData[2]);
        	// Starting thread to count workbreaktiem
     	timerThread.start(); 
-        
-        //additional time display on diaglog box when double clicking
-      
-      
-      	
-        try {
-          //  UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-            UIManager.setLookAndFeel(lfOptions[FileUtil.fileDBData[3]-10]);
-         // UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-            
-        } catch (UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace();
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        } catch (InstantiationException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
+       //additional time display on diaglog box when double clicking
+    	
+       try {
+		UIManager.setLookAndFeel((LookAndFeel) lfOptions[FileUtil.fileDBData[3]-10]);
+	} catch (UnsupportedLookAndFeelException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    //	FlatMTMonokaiProIJTheme.setup();
+		// 2. Adjust component styling keys via UIManager properties
+		
         /* Turn off metal's use of bold fonts */
-        UIManager.put("swing.boldMetal", Boolean.FALSE);
+       UIManager.put("swing.boldMetal", Boolean.FALSE);
+    	UIManager.put("Button.arc", 0);                   // Remove round corners on buttons (0 = square)
+    	UIManager.put("Component.arc", 0);                // Remove round corners on inputs/spinners
+    	UIManager.put("ProgressBar.arc", 4);              // Semi-round progress bars
+    	UIManager.put("TitlePane.unifiedBackground", true);
+        
         //Schedule a job for the event-dispatching thread:
         //adding TrayIcon.
         SwingUtilities.invokeLater(new Runnable() {
@@ -70,9 +72,9 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
     
  private static void createAndShowGUI() {
 	allFont = new Font("Verdana", Font.PLAIN, FileUtil.fileDBData[2]);
-    
-        //Check the SystemTray support
-        if (!SystemTray.isSupported()) {
+	// Get the URL of the image from the classpath
+
+	if (!SystemTray.isSupported()) {
             System.out.println("SystemTray is not supported");
             return;
         }
@@ -255,14 +257,14 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
     }
     
     //Obtain the image URL
-    protected static Image createImage(String path, String description) {
-        URL imageURL = TrayIconDemo.class.getResource(path);
+    protected static Image createImage(String path) {
+        URL imageURL = new TrayIconDemo().getClass().getResource(path);
         
         if (imageURL == null) {
             System.err.println("Resource not found: " + path);
             return null;
         } else {
-            return (new ImageIcon(imageURL, description)).getImage();
+            return (new ImageIcon(imageURL)).getImage();
         }
     }
   //Create a status Message
@@ -273,7 +275,7 @@ static String[] lfOptions = {"com.sun.java.swing.plaf.windows.WindowsLookAndFeel
     			      "\n  StartTime:- " + new MyThread().currentLocalTime.format(myFormatObj)+
                    "\n NextAlarm:- " + new MyThread().additionalTime.format(myFormatObj) +
                    "\n "+ TrayIconDemo.textTotalWorkHours
-                     
+             
     			   
     			   );
     

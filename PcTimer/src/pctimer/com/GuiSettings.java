@@ -20,8 +20,8 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
  static JComboBox<String> cb;
 
 
- String[] cbOptions ={"WindowsLookAndFeel","MetalLookAndFeel","GTKLookAndFeel","MotifLookAndFeel"};
-   
+ String[] cbOptions ={"FlatLightLaf","FlatMTLightOwlIJTheme","FlatMTMonokaiProIJTheme","FlatMTMaterialOceanicIJTheme"};
+
 
     // slider
     static JSlider s1,s2,s3;
@@ -161,6 +161,7 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
      frame.add(new GuiSettings());
      try {
 		frame.setIconImage(new ImageIcon(imageURL).getImage());
+	
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

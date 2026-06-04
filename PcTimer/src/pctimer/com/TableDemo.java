@@ -26,8 +26,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
-import graph.com.BarLineChart;
+import graph.com.RotatingSliderDemo;
 
 
 
@@ -54,7 +58,6 @@ public class TableDemo extends JPanel implements ActionListener,ComponentListene
      final private String selectedRow = "SELECTEDROW";
      final private String exit = "EXIT";
      final private String chart = "CHART";
-    
     
     static JTable table =null;
     JToolBar toolBar =null;
@@ -143,15 +146,16 @@ public class TableDemo extends JPanel implements ActionListener,ComponentListene
           toolBar.add(button);
       
           //FIFTH BUTTON
-          button = makeNavigationButton("print",print,
-                  "print the table",
-             "print");
-          toolBar.add(button);
-          
-          //sixth BUTTON
           button = makeNavigationButton("deleterow",selectedRow,
                   "Selected Row Delete",
              "selectrow");
+          toolBar.add(button);
+          
+          //sixth BUTTON
+                    
+          button = makeNavigationButton("print",print,
+                  "print the table",
+             "print");
           toolBar.add(button);
     
         //SEVENTH  button  
@@ -193,9 +197,9 @@ return button;
 }
 
       
-      static  public void addRow(String a,String b , String c,String d)
+      static  public void addRow(String a,String b , String c,String d,Boolean s)
       {
-    	   Object[] data= { a, b,c,d,Boolean.FALSE};
+    	   Object[] data= { a, b,c,d,s};
     	 
     	    MyThread.tableModel.addRow(data);
 
@@ -227,7 +231,7 @@ return button;
     	if(chart.equals(buttonCmd))  
       	{
     		
-    		new BarLineChart().createAndShowGUI();
+    		new RotatingSliderDemo(null).createAndShowGUI();
        /* while( MyThread.tableModel.getRowCount()>1)
         	 MyThread.tableModel.removeRow(0);*/
       	}
@@ -277,12 +281,20 @@ return button;
      			MyThread.tableModel.removeRow(modelRowIndex); 
              }
     	}
-     	else if(exit.equals(buttonCmd))
-    	{
-     		 TrayIconDemo.tray.remove(TrayIconDemo.trayIcon);
+     	else if(exit.equals(buttonCmd)) {
+    	 		int response = JOptionPane.showConfirmDialog(
+    		    null, 
+    		    "Are you sure you want to exit?", 
+    		    "Exit Confirmation", 
+    		    JOptionPane.YES_NO_OPTION
+    		);
+      	if (response == JOptionPane.YES_OPTION) {
+    		 TrayIconDemo.tray.remove(TrayIconDemo.trayIcon);
              System.exit(0);
-    	}
-      }//action performed closed
+      	}
+     		
+     	}
+     }//action performed closed
 
       public void saveRecord()  // save record function 
       {
@@ -305,12 +317,24 @@ return button;
    }
 
       public void createAndShowGUI() {
-    	  
-    	  
+    	      	  
     	     //Create and set up the window.
          JFrame  frame = new JFrame("TableDemo");
-          frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-           
+          frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //DISPOSE_ON_CLOSE);DO_NOTHING_ON_CLOSE);
+         
+          // ADD WINDOW LISTENER TO CLOSE window with options.
+         /* frame.addWindowListener(new java.awt.event.WindowAdapter() {
+        	    @Override
+        	    public void windowClosing(java.awt.event.WindowEvent e) {
+        	        // Confirm before exiting
+        	        if (JOptionPane.showConfirmDialog(null, 
+        	            "Are you sure you want to exit?", "Exit Program", 
+        	            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        	        	 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        	        }
+        	    }
+        	});*/ //ACTIVATE IF REQUIRED IN FUTURE 
+     
              
           //Add content to the window.
           frame.add(new TableDemo());

@@ -14,11 +14,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+
+
 public class CSVFileDataRead{
 	Boolean recordNotFound = true;
 	 @SuppressWarnings("rawtypes")
 	 Collection <List> collectionOfArraysList = new ArrayList<>();
-	 
+	   int  fileRecordLimit=0; 
+	   
 	public CSVFileDataRead() {
         super();
     }
@@ -40,8 +43,10 @@ public class CSVFileDataRead{
                 if (columns.length > 0) {
                     firstColumnData.add(columns[0]);
                     secondColumnData.add(columns[1]);
+                    
                 }
             }
+         
             
             
         } catch (IOException e) {
@@ -82,9 +87,21 @@ public class CSVFileDataRead{
 	  
 	       Files.createDirectories(path);
 	       FileWriter csv = new FileWriter(new File(path.toString()+csvFileName));
-	      
-                                 
-	       for (int i = 0; i <  firstColumnData.size(); i++) {
+	    				    	// restrict the number of row to 100 let it expand to 130 and then delete once 130 reached..
+				           if(firstColumnData.size()>130) {
+				             int  fileRecordLimit=0; 
+				           	  fileRecordLimit= firstColumnData.size()-100;
+				          	
+				           	 for (int i=1;i<fileRecordLimit;i++) {
+				            firstColumnData.remove(i);
+				           	secondColumnData.remove(i);
+				         
+				           	 }  
+				         	
+				           }         // code ends here              
+	       
+           
+           for (int i = 0; i <  firstColumnData.size(); i++) {
 	           csv.write(firstColumnData.get(i) + ",");
 	           csv.write(secondColumnData.get(i) );
 	           csv.write("\n");

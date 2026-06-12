@@ -20,7 +20,8 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
  static JComboBox<String> cb;
 
 
- String[] cbOptions ={"FlatLightLaf","FlatMTLightOwlIJTheme","FlatMTMonokaiProIJTheme","FlatMTMaterialOceanicIJTheme"};
+ String[] cbOptions ={"FlatLightLaf","FlatMTLightOwlIJTheme","FlatMTMonokaiProIJTheme","FlatMTMaterialOceanicIJTheme","GTKLookAndFeel",
+		                         "MotifLookAndFeel", "WindowsLookAndFeel"};
 
 
     // slider

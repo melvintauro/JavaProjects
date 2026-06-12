@@ -5,6 +5,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.Timer;
+
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.awt.GridBagLayout;
@@ -26,6 +28,7 @@ class MyThread extends Thread
 	int lookAwayBlinkTime=1;
 	int sleepTime=30000;
 	int  sleepCounter=0;
+	int sleepCounterIterate =10;
 	int sleepCounterTime=120;
 	String dialogLabelMessage= "Break Time ";
 	boolean workTimeStatus = true;
@@ -53,6 +56,8 @@ class MyThread extends Thread
     Point mouseCoordinates = null;
     public int oldMouseCoordinates= 1;
 	private boolean blinkStatus;
+	String oldDate= LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"));
+	String newDate= LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"));
 		
 	// Overriding the run method
   	@SuppressWarnings("static-access")
@@ -73,7 +78,8 @@ class MyThread extends Thread
   	while(exit) {
 
   			try {
-  			// code checking  if user is working on pc
+  				
+  				// code checking  if user is working on pc
   	  			userWorkingCheck() ;  // check if user is around  	  	
   	  			// code checking  if the PC is in sleep mode 
 				pcSleepModeCheck();
@@ -164,6 +170,8 @@ class MyThread extends Thread
     
   	
   	}//run end
+  	
+  	
 		  	private void blink() throws InterruptedException {
 				// TODO Auto-generated method stub
 		  	    // blink for loop is here          
@@ -177,12 +185,14 @@ class MyThread extends Thread
 	private void pcSleepModeCheck() throws InterruptedException {
 	  	// code checking  if the PC is in sleep mode 
 		long before = System.currentTimeMillis();
+		            
 					sleep(sleepTime);
 		  		 	long after = System.currentTimeMillis();
 			 if (after - before > sleepTime+1000) { // If gap is > 30+1=31 seconds
 			     sleepCounter++;
-			   if (sleepCounter>3) {
-			     	  setRestartThreadParameters();
+			   if (sleepCounter>1) {
+				      newDayDeleteOldRow();
+				      setRestartThreadParameters();
 					  beepPCSpeaker(2);
 				   }   
 	        }// pc in sleep mode code ends here 
@@ -244,25 +254,24 @@ class MyThread extends Thread
 		            	pointerInfo = MouseInfo.getPointerInfo();
 		    		     // Extract the specific point containing X and Y coordinates
 		    	    	 mouseCoordinates = pointerInfo.getLocation();
-		        
-		    	    	 if (mouseCoordinates.x == oldMouseCoordinates) {
+		            	 if (mouseCoordinates.x == oldMouseCoordinates) {
 		    	    	   	 	  sleepCounter++;
-		    	    		    	    	 	  
 		    	    	   }else {
 		    	    		          sleepCounter=0; 
 		    	    	              if(!userStatus) {setRestartThreadParameters();}
 		    	    	              userStatus=true;
-		    	    	             if(breakTimeStatus&& TableDemo.table.getModel().getValueAt(TableDemo.table.getModel().getRowCount()-1,4).toString().equals("false")) {TableDemo.table.getModel().setValueAt(true,TableDemo.table.getModel().getRowCount()-1,4);}  
-		    	    	   
+		    	    	             if(breakTimeStatus&& TableDemo.table.getModel().getValueAt(TableDemo.table.getModel().getRowCount()-1,4).toString().equals("false")) {
+		    	    	            	 TableDemo.table.getModel().setValueAt(true,TableDemo.table.getModel().getRowCount()-1,4);
+		    	    	             }  
 		    	    	   }
-		    	    	  if (sleepCounter >10 && userStatus ){  
+		    	    	  if (sleepCounter >sleepCounterIterate && userStatus ){  
 		    	    		  System.out.println("inside time mod  "+ TableDemo.table.getModel().getRowCount());
 		    	    		  blinkStatus=false;
 		    	    		  userStatus=false; 
 		    	    		      if(breakTimeStatus || workTimeStatus) {
 		    	    		    	     LocalTime newCurrentLocalTime= LocalTime.now();
-		    	    		    	      TableDemo.table.getModel().setValueAt(newCurrentLocalTime.format(myFormatObj),TableDemo.table.getModel().getRowCount()-1,2);
-										 TableDemo.table.getModel().setValueAt(Long.toString(Math.max((newCurrentLocalTime.toSecondOfDay()-currentLocalTime.toSecondOfDay()-300),1)/60),TableDemo.table.getModel().getRowCount()-1,3);
+		    	    		    	      TableDemo.table.getModel().setValueAt(newCurrentLocalTime.minusSeconds((sleepTime/1000)*sleepCounterIterate).format(myFormatObj),TableDemo.table.getModel().getRowCount()-1,2);
+										 TableDemo.table.getModel().setValueAt(Long.toString(Math.max((newCurrentLocalTime.toSecondOfDay()-currentLocalTime.toSecondOfDay()-((sleepTime/1000)*sleepCounterIterate)),1)/60),TableDemo.table.getModel().getRowCount()-1,3);
 										 TableDemo.table.getModel().setValueAt(true,TableDemo.table.getModel().getRowCount()-1,4);
 		    	    		     
 		    	    		      }
@@ -271,6 +280,19 @@ class MyThread extends Thread
 		    	    	  } 
 		    	            	 oldMouseCoordinates= mouseCoordinates.x;
 
-		    }
+		            }
 		    
+                 public void newDayDeleteOldRow() {
+					     newDate=LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"));
+		                    if (!oldDate.equals(newDate)&&TableDemo.table.getModel().getRowCount()>1)  { 	 
+				                    for (int i=TableDemo.table.getModel().getRowCount(); i>0 ;i--) {
+				                    	MyThread.tableModel.removeRow(i);
+				                    }
+		                   }
+             
+                            oldDate=newDate;
+
+                 }
+
+
 }            

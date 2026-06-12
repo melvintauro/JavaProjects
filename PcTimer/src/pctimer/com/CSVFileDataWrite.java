@@ -33,9 +33,11 @@ public class CSVFileDataWrite{
 	           csv.write(model.getColumnName(i) + ",");
 	       }
 	       csv.write("\n");
-
+	
+        	   
+	       // write to file the complete data on each row or the model.
 	       for (int i = 0; i < model.getRowCount(); i++) {
-	           for (int j = 0; j < model.getColumnCount(); j++) {
+	       	   for (int j = 0; j < model.getColumnCount(); j++) {
 	               csv.write(model.getValueAt(i, j).toString() + ",");
 	           }
 	           
@@ -75,7 +77,7 @@ public class CSVFileDataWrite{
 							csv.write("\n");
 							csv.write(LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"))+",");
 							csv.write(Float.toString(CheckboxTableModel.countCheckedCheckboxes(TableDemo.table,4)));
-							System.out.println("inside csvfiledatawrite");
+							
 						    csv.close();
 						    return true; }	  
 				  

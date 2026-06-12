@@ -33,7 +33,7 @@ public static SystemTray tray=null;
 static Object[] lfOptions = {new FlatLightLaf(),
 		           new FlatMTLightOwlIJTheme(),
 		 new FlatMTMonokaiProIJTheme(),
-		 new FlatMTMaterialOceanicIJTheme()    };
+		 new FlatMTMaterialOceanicIJTheme(), "com.sun.java.swing.plaf.gtk.GTKLookAndFeel","com.sun.java.swing.plaf.motif.MotifLookAndFeel","com.sun.java.swing.plaf.windows.WindowsLookAndFeel"   };
 
 
 
@@ -46,7 +46,7 @@ static Object[] lfOptions = {new FlatLightLaf(),
        //additional time display on diaglog box when double clicking
     	
        try {
-		UIManager.setLookAndFeel((LookAndFeel) lfOptions[FileUtil.fileDBData[3]-10]);
+		UIManager.setLookAndFeel( (LookAndFeel) lfOptions[FileUtil.fileDBData[3]-10]);
 	} catch (UnsupportedLookAndFeelException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -55,7 +55,7 @@ static Object[] lfOptions = {new FlatLightLaf(),
 		// 2. Adjust component styling keys via UIManager properties
 		
         /* Turn off metal's use of bold fonts */
-       UIManager.put("swing.boldMetal", Boolean.FALSE);
+     //   UIManager.put("swing.boldMetal", Boolean.FALSE);
     	UIManager.put("Button.arc", 0);                   // Remove round corners on buttons (0 = square)
     	UIManager.put("Component.arc", 0);                // Remove round corners on inputs/spinners
     	UIManager.put("ProgressBar.arc", 4);              // Semi-round progress bars

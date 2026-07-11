@@ -56,8 +56,9 @@ class MyThread extends Thread
     Point mouseCoordinates = null;
     public int oldMouseCoordinates= 1;
 	private boolean blinkStatus;
-	String oldDate= LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"));
-	String newDate= LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"));
+	 String oldDate=LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"));
+	
+	String newDate= null;
 		
 	// Overriding the run method
   	@SuppressWarnings("static-access")
@@ -78,7 +79,7 @@ class MyThread extends Thread
   	while(exit) {
 
   			try {
-  				
+  				 newDayDeleteOldRow();
   				// code checking  if user is working on pc
   	  			userWorkingCheck() ;  // check if user is around  	  	
   	  			// code checking  if the PC is in sleep mode 
@@ -190,8 +191,7 @@ class MyThread extends Thread
 		  		 	long after = System.currentTimeMillis();
 			 if (after - before > sleepTime+1000) { // If gap is > 30+1=31 seconds
 			     sleepCounter++;
-			   if (sleepCounter>1) {
-				      newDayDeleteOldRow();
+			   if (sleepCounter>2) {
 				      setRestartThreadParameters();
 					  beepPCSpeaker(2);
 				   }   
@@ -284,13 +284,14 @@ class MyThread extends Thread
 		    
                  public void newDayDeleteOldRow() {
 					     newDate=LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"));
-		                    if (!oldDate.equals(newDate)&&TableDemo.table.getModel().getRowCount()>1)  { 	 
-				                    for (int i=TableDemo.table.getModel().getRowCount(); i>0 ;i--) {
-				                    	MyThread.tableModel.removeRow(i);
-				                    }
-		                   }
-             
-                            oldDate=newDate;
+		                   if (!oldDate.equals(newDate))  { 
+		                             while( MyThread.tableModel.getRowCount()>1) {
+				        	          MyThread.tableModel.removeRow(0);
+					                } 
+		                  oldDate=newDate;
+		                  }
+             System.out.println("new :" + newDate + " old Date :" + oldDate);
+                     
 
                  }
 

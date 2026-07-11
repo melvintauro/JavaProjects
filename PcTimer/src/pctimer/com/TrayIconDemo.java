@@ -27,13 +27,13 @@ public static String textTotalWorkHours =null;
 public static JLabel labelTotalWorkHours =null;
 public static Font allFont=null;
 public static SystemTray tray=null;
- 
+
+public static String lookAndFeelSystem = UIManager.getSystemLookAndFeelClassName();
+public static String lookAndFeelCross = UIManager.getCrossPlatformLookAndFeelClassName();
 
 
-static Object[] lfOptions = {new FlatLightLaf(),
-		           new FlatMTLightOwlIJTheme(),
-		 new FlatMTMonokaiProIJTheme(),
-		 new FlatMTMaterialOceanicIJTheme(), "com.sun.java.swing.plaf.gtk.GTKLookAndFeel","com.sun.java.swing.plaf.motif.MotifLookAndFeel","com.sun.java.swing.plaf.windows.WindowsLookAndFeel"   };
+static String[] lfOptions = { "com.sun.java.swing.plaf.gtk.GTKLookAndFeel","com.sun.java.swing.plaf.motif.MotifLookAndFeel","com.sun.java.swing.plaf.windows.WindowsLookAndFeel" 
+		                                    ,lookAndFeelSystem ,lookAndFeelCross };
 
 
 
@@ -46,11 +46,20 @@ static Object[] lfOptions = {new FlatLightLaf(),
        //additional time display on diaglog box when double clicking
     	
        try {
-		UIManager.setLookAndFeel( (LookAndFeel) lfOptions[FileUtil.fileDBData[3]-10]);
+		UIManager.setLookAndFeel( lfOptions[FileUtil.fileDBData[3]-10]);
 	} catch (UnsupportedLookAndFeelException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+       catch (ClassNotFoundException e) {
+           // handle exception
+        }
+        catch (InstantiationException e) {
+           // handle exception
+        }
+        catch (IllegalAccessException e) {
+           // handle exception
+        }
     //	FlatMTMonokaiProIJTheme.setup();
 		// 2. Adjust component styling keys via UIManager properties
 		

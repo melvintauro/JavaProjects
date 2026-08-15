@@ -87,8 +87,8 @@ public class CSVFileDataRead{
 	  
 	       Files.createDirectories(path);
 	       FileWriter csv = new FileWriter(new File(path.toString()+csvFileName));
-	    				    	// restrict the number of row to 60 let it expand to 90 and then delete once 90 reached..
-				           if(firstColumnData.size()>90) {
+	    				    	// restrict the number of row to 60 let it expand to 70 and then delete once 70 reached..
+				           if(firstColumnData.size()>70) {
 				             int  fileRecordLimit=0; 
 				           	  fileRecordLimit= firstColumnData.size()-60;
 				          	

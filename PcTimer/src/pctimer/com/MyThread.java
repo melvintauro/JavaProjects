@@ -83,7 +83,8 @@ class MyThread extends Thread
   				// code checking  if user is working on pc
   	  			userWorkingCheck() ;  // check if user is around  	  	
   	  			// code checking  if the PC is in sleep mode 
-				pcSleepModeCheck();
+  	  		  sleep(sleepTime);
+  	  		//	pcSleepModeCheck();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				//e.printStackTrace();
@@ -188,10 +189,10 @@ class MyThread extends Thread
 		long before = System.currentTimeMillis();
 		            
 					sleep(sleepTime);
-		  		 	long after = System.currentTimeMillis();
+		long after = System.currentTimeMillis();
 			 if (after - before > sleepTime+1000) { // If gap is > 30+1=31 seconds
 			     sleepCounter++;
-			   if (sleepCounter>2) {
+			   if (sleepCounter>3) {
 				      setRestartThreadParameters();
 					  beepPCSpeaker(2);
 				   }   
@@ -285,7 +286,7 @@ class MyThread extends Thread
                  public void newDayDeleteOldRow() {
 					     newDate=LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMMyyy"));
 		                   if (!oldDate.equals(newDate))  { 
-		                             while( MyThread.tableModel.getRowCount()>1) {
+		                             while( MyThread.tableModel.getRowCount()>0) {
 				        	          MyThread.tableModel.removeRow(0);
 					                } 
 		                  oldDate=newDate;

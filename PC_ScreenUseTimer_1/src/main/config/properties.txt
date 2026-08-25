@@ -1,5 +1,0 @@
- WorkTime=31
-BreakTime=10
-     Font=12
-look&feel=10
-Tolbarori=10

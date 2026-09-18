@@ -42,7 +42,7 @@ public class TableDemo extends JPanel implements ActionListener,ComponentListene
 	 */
 	
 
-	URL imageURL = TrayIconDemo.class.getResource("images/record.png");
+	URL imageURL = getClass().getResource("/images/record.png") ;//TrayIconDemo.class.getResource("images/record.png");
 	
 	//URL imageURL1 = TrayIconDemo.class.getResource("images/deleterow.gif");
 	//URL imageURL2 = TrayIconDemo.class.getResource("images/reset.png");
@@ -174,10 +174,10 @@ public class TableDemo extends JPanel implements ActionListener,ComponentListene
               String toolTipText,
               String altText) {
     	  //Look for the image.
-          String imgLocation = "images/"
+          String imgLocation = "/images/"
                                + imageName
                                + ".gif";
-          URL imageURL = TrayIconDemo.class.getResource(imgLocation); 
+          URL imageURL = getClass().getResource(imgLocation);// TrayIconDemo.class.getResource(imgLocation); 
 
 //Create and initialize the button.
 JButton button = new JButton();

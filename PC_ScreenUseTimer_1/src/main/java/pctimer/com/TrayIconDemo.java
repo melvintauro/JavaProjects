@@ -6,6 +6,7 @@ package pctimer.com;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.*;
@@ -22,7 +23,7 @@ static DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm");
 public static MyThread timerThread = new MyThread();
 public static FileUtil fu1=new FileUtil();
 
-public static TrayIcon trayIcon =new TrayIcon(createImage("images/pcworker.gif"), "tray icon"); 
+public static TrayIcon trayIcon =new TrayIcon(createImage(), "tray icon"); 
 
 public static String textTotalWorkHours =null;
 public static JLabel labelTotalWorkHours =null;
@@ -260,23 +261,51 @@ static String[] lfOptions = { "com.sun.java.swing.plaf.gtk.GTKLookAndFeel","com.
         
         exitItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tray.remove(trayIcon);
-                System.exit(0);
+            	int response = JOptionPane.showConfirmDialog(
+            		    null, 
+            		    "Are you sure you want to exit?", 
+            		    "Exit Confirmation", 
+            		    JOptionPane.YES_NO_OPTION
+            		);
+              	if (response == JOptionPane.YES_OPTION) {
+            		
+        		
+              		try {
+              			EventTableDB.setupTable();
+        				EventTableDB.saveTableDataToSql();
+        				 TrayIconDemo.tray.remove(TrayIconDemo.trayIcon);
+        				 tray.remove(trayIcon);
+        				 System.exit(0);
+        			} catch (SQLException e1) {
+        				// TODO Auto-generated catch block
+        				e1.printStackTrace();
+        			};
+              	}
+             		
+                      
             }
         });
     }
     
     //Obtain the image URL
-    protected static Image createImage(String path) {
-        URL imageURL = new TrayIconDemo().getClass().getResource(path);
+    protected static  Image createImage() {
+        URL imageURL = null;
+		try {
+			imageURL = new TrayIconDemo().getClass().getResource("/images/pcworker.gif");
+		
         
         if (imageURL == null) {
-            System.err.println("Resource not found: " + path);
+            System.err.println("Resource not found: " );
             return null;
-        } else {
-            return (new ImageIcon(imageURL)).getImage();
-        }
-    }
+        } 
+   
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//new TrayIconDemo().getClass().getResource(path);
+		return (new ImageIcon(imageURL)).getImage();
+		
+	}
   //Create a status Message
     protected static String getMessageInfoStatus()
     {

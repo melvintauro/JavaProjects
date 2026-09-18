@@ -13,11 +13,14 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
  /**
 	 * 
 	 */
+	
 	private static final long serialVersionUID = 1L;
-  URL imageURL = TrayIconDemo.class.getResource("images/setting.gif");	
+  URL imageURL = getClass().getResource("/images/setting.gif") ;//TrayIconDemo.class.getResource("images/setting.gif");
+  
  FileUtil FU = new FileUtil(); // create File utility object.
 
  static JComboBox<String> cb;
+ static JFrame frame=null;
 
 
  String[] cbOptions ={"GTKLookAndFeel","MotifLookAndFeel", "WindowsLookAndFeel","SystemL&F","CrossL&F"};
@@ -57,7 +60,7 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
             cb = new JComboBox<>(cbOptions);
            cb.setSelectedIndex(FileUtil.fileDBData[3]-10);
         
-    	   s1 =createSliders(25,50,new MyThread().workTime,true,true,true,5,1);
+    	   s1 =createSliders(10,50,new MyThread().workTime,true,true,true,5,1);
     	   s2 =createSliders(10,20,new MyThread().breakTime,true,true,true,2,1);
     	   s3 =createSliders(10,20,FileUtil.fileDBData[2],true,true,true,2,1);
     	   
@@ -74,7 +77,7 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
        jp1.add( s2);
        jp1.add(l3); 
        jp1.add( s3);
-        bu= new Button("Save");
+        bu= new Button("Save & Close");
         bu.setFont(TrayIconDemo.allFont);
        //Add an action listener to the button
        bu.addActionListener(this);  
@@ -142,7 +145,9 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
            TrayIconDemo.timerThread.breakTime = s2.getValue();
              
              FU.fileWrite(FileUtil.fileDBData);
-           
+             
+             
+         frame.dispose();
 										
 			
              
@@ -153,7 +158,7 @@ class GuiSettings extends JPanel implements ChangeListener, ActionListener {
   	  
   	  
 	     //Create and set up the window.
-    JFrame  frame = new JFrame("Settings");
+     frame = new JFrame("Settings");
      frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
       
         

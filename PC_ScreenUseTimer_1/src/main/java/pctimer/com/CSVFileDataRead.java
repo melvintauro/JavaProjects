@@ -92,7 +92,7 @@ public class CSVFileDataRead{
 				             int  fileRecordLimit=0; 
 				           	  fileRecordLimit= firstColumnData.size()-60;
 				          	
-				           	 for (int i=1;i<fileRecordLimit;i++) {
+				           	 for (int i=0;i<fileRecordLimit;i++) {
 				            firstColumnData.remove(i);
 				           	secondColumnData.remove(i);
 				         

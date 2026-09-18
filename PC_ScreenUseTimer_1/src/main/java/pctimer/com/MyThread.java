@@ -74,7 +74,7 @@ class MyThread extends Thread
   		dialog.add(dialogLabel);
   		dialog.setPreferredSize(new java.awt.Dimension(200,200));
   		dialog.setLocation(600,250);  //500,200
-  		dialog.setIconImage(new ImageIcon(imageURL).getImage());
+  		dialog.setIconImage(new ImageIcon(getClass().getResource("/images/bulb.gif") ).getImage());
   		dialog.setTitle ("Action Status");
   		  		dialog.pack();
   		  		createTableModel(); 
@@ -267,30 +267,34 @@ class MyThread extends Thread
 		    		     // Extract the specific point containing X and Y coordinates
 		    	    	 mouseCoordinates = pointerInfo.getLocation();
 		            	 if (mouseCoordinates.x == oldMouseCoordinates) {
-		    	    	   	 	  sleepCounter++;
+		    	    	   	 	  sleepCounter++;  //Count if mouse not moved.
 		    	    	   }else {
 		    	    		          sleepCounter=0; 
 		    	    	              if(!userStatus) {setRestartThreadParameters();}
-		    	    	              userStatus=true;
+		    	    	              userStatus=true;  // set user status as available and working.
 		    	    	             if(breakTimeStatus&& TableDemo.table.getModel().getValueAt(TableDemo.table.getModel().getRowCount()-1,4).toString().equals("false")) {
 		    	    	            	 TableDemo.table.getModel().setValueAt(true,TableDemo.table.getModel().getRowCount()-1,4);
 		    	    	             }  
 		    	    	   }
 		    	    	  if (sleepCounter >sleepCounterIterate && userStatus ){  
-		    	    		  System.out.println("inside time mod  "+ TableDemo.table.getModel().getRowCount());
 		    	    		  blinkStatus=false;
 		    	    		  userStatus=false; 
 		    	    		      if(breakTimeStatus || workTimeStatus) {
 		    	    		    	     LocalTime newCurrentLocalTime= LocalTime.now();
 		    	    		    	      if (!((newCurrentLocalTime.toSecondOfDay()-currentLocalTime.toSecondOfDay()-((sleepTime/1000)*sleepCounterIterate))<0)) {
 		    	    		    	     TableDemo.table.getModel().setValueAt(newCurrentLocalTime.minusSeconds((sleepTime/1000)*sleepCounterIterate).format(myFormatObj),TableDemo.table.getModel().getRowCount()-1,2);
-										 TableDemo.table.getModel().setValueAt(Long.toString(Math.max((newCurrentLocalTime.toSecondOfDay()-currentLocalTime.toSecondOfDay()-((sleepTime/1000)*sleepCounterIterate)),1)/60),TableDemo.table.getModel().getRowCount()-1,3);
+										 TableDemo.table.getModel().setValueAt(Long.toString(Math.max((newCurrentLocalTime.toSecondOfDay()+60-currentLocalTime.toSecondOfDay()-((sleepTime/1000)*sleepCounterIterate)),1)/60),TableDemo.table.getModel().getRowCount()-1,3);
 										 TableDemo.table.getModel().setValueAt(true,TableDemo.table.getModel().getRowCount()-1,4);
+		    	    		    	     
 		    	    		    	      }else {
-		    	    		    	    	    
+		    	    		    	    	   int workBreak; 
+		    	    		    	    	   if(workTimeStatus) {workBreak=breakTime;}else {workBreak=workTime;}
 		    	    		    	    	    TableDemo.table.getModel().setValueAt(newCurrentLocalTime.minusSeconds((sleepTime/1000)*sleepCounterIterate).format(myFormatObj),TableDemo.table.getModel().getRowCount()-2,2);
-												 TableDemo.table.getModel().setValueAt(Long.toString(Math.max((newCurrentLocalTime.toSecondOfDay()-currentLocalTime.toSecondOfDay()-((sleepTime/1000)*sleepCounterIterate)),1)/60),TableDemo.table.getModel().getRowCount()-2,3);
-												 TableDemo.table.getModel().setValueAt(true,TableDemo.table.getModel().getRowCount()-2,4);
+		    	    		    	    	    TableDemo.table.getModel().setValueAt(workBreak+((newCurrentLocalTime.toSecondOfDay()-currentLocalTime.toSecondOfDay()-((sleepTime/1000)*sleepCounterIterate))/60),TableDemo.table.getModel().getRowCount()-2,3);
+		    	    		    	    	   
+		    	    		    	    	    TableDemo.table.getModel().setValueAt(currentLocalTime.format(myFormatObj),TableDemo.table.getModel().getRowCount()-1,2);
+		    	    		    	    	    TableDemo.table.getModel().setValueAt(Long.toString(Math.max((newCurrentLocalTime.toSecondOfDay()-currentLocalTime.toSecondOfDay()-((sleepTime/1000)*sleepCounterIterate)),1)/60),TableDemo.table.getModel().getRowCount()-1,3);
+												//TableDemo.table.getModel().setValueAt(true,TableDemo.table.getModel().getRowCount()-2,4);
 		    	    		    	      
 		    	    		    	      }
 		    	    		      }

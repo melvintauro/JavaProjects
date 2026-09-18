@@ -87,7 +87,7 @@ public class EventTableDB {
                     }else {
                 	String val3 = LocalTime.now().format(myFormatObj);
                 	String val4 =  Integer.toString((LocalTime.now().toSecondOfDay()- MyThread.currentLocalTime.toSecondOfDay())/60);
-                	System.out.println("inside  " + val4 +" now  " +LocalTime.now().toSecondOfDay() + " then " +MyThread.currentLocalTime.toSecondOfDay()) ;
+                	
                 	// Bind parameters to the query
                     pstmt.setString(1, val1);
                     pstmt.setString(2, val2);
